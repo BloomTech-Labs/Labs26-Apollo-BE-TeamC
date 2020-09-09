@@ -1,8 +1,8 @@
 const express = require('express');
-const authRequired = require('../middleware/authRequired');
-const Profiles = require('./profileModel');
+// const authRequired = require('../middleware/authRequired');
+// const Profiles = require('./profileModel');
 const db = require('./topicModel');
-const dbConfig = require('../../data/db-config');
+// const dbConfig = require('../../data/db-config');
 const router = express.Router();
 
 router.get('/', (req, res) => {
