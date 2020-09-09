@@ -14,7 +14,7 @@ exports.up = (knex) => {
       .createTable('topics', (table) => {
         table.increments();
         table
-          .integer('created_by')
+          .string('created_by')
           .unsigned()
           .notNullable()
           .references('id')
@@ -64,7 +64,7 @@ exports.up = (knex) => {
           .onUpdate('CASCADE')
           .onDelete('CASCADE');
         table
-          .integer('member_id')
+          .string('member_id')
           .unsigned()
           .notNullable()
           .references('id')
@@ -107,7 +107,7 @@ exports.up = (knex) => {
           .integer('question_id')
           .unsigned()
           .references('id')
-          .inTable('questions')
+          .inTable('topic_questions')
           .onUpdate('CASCADE')
           .onDelete('CASCADE');
         table.integer('answer_type').unsigned().notNullable();
@@ -117,5 +117,13 @@ exports.up = (knex) => {
 };
 
 exports.down = (knex) => {
-  return knex.schema.dropTableIfExists('profiles');
+  return knex.schema
+    .dropTableIfExists('topic_iteration_and_questions')
+    .dropTableIfExists('topic_questions')
+    .dropTableIfExists('topic_iteration')
+    .dropTableIfExists('topic_members_junction')
+    .dropTableIfExists('topics_context_junction')
+    .dropTableIfExists('topic_context_questions')
+    .dropTableIfExists('topics')
+    .dropTableIfExists('profiles');
 };
