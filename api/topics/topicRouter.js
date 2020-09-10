@@ -47,4 +47,21 @@ router.post('/', (req, res) => {
     });
 });
 
+router.post('/:id/context', (req, res) => {
+  const context = req.body;
+  const topicId = req.params.id;
+  if (!context) {
+    return res.status(400).json({ message: 'Must include context' });
+  }
+  db.addContext(context, topicId)
+    .then((context) => {
+      console.log(context);
+      res.status(201).json(context);
+    })
+    .catch((error) => {
+      console.log('Error Adding Context', error);
+      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+    });
+});
+
 module.exports = router;

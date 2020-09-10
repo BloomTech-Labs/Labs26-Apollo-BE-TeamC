@@ -16,10 +16,28 @@ const addTopic = async (info) => {
   return await findById(newTopicId);
 };
 
-
+const addContext = async (context, topicId) => {
+  const [newTopicContextId] = await db('topic_context_questions').insert(
+    context,
+    'id'
+  );
+  await db('topics_context_junction').insert({
+    topic_id: topicId,
+    context_id: newTopicContextId,
+  });
+  return await db('topics_context_junction')
+    .where({ topic_id: topicId })
+    .join(
+      'topic_context_questions',
+      'topic_context_questions.id',
+      'topics_context_junction.context_id'
+    )
+    .select('topic_context_questions.content');
+};
 
 module.exports = {
   findAllTopics,
   findById,
   addTopic,
+  addContext,
 };
