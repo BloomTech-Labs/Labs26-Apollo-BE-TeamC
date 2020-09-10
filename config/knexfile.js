@@ -1,6 +1,8 @@
 var dotenv = require('dotenv');
 dotenv.config({ path: '../.env' });
 
+// .env DATABSE_URL changed to postgres reference for more details
+
 module.exports = {
   development: {
     client: 'pg',
