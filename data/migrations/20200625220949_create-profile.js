@@ -33,7 +33,7 @@ exports.up = (knex) => {
 
       // Junctions
       //Topics & Contexts junction
-      .createTable('topics_context_junction', (table) => {
+      .createTable('topic_context_junction', (table) => {
         table
           .integer('topic_id')
           .unsigned()
@@ -88,10 +88,51 @@ exports.up = (knex) => {
         table.timestamp('posted_at').defaultTo(knex.fn.now());
       })
 
+      .createTable('topic_iteration_and_context_responses', (table) => {
+        table
+          .integer('iteration_id')
+          .unsigned()
+          .references('id')
+          .inTable('topic_iteration')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table
+          .integer('context_id')
+          .unsigned()
+          .notNullable()
+          .references('id')
+          .inTable('topic_context_questions')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table.string('content').notNullable();
+        table.primary(['iteration_id', 'context_id']);
+      })
+
       //questions for the topic
       .createTable('topic_questions', (table) => {
         table.increments();
-        table.string('question').notNullable();
+        table.string('content').notNullable();
+        table.string('response_type').notNullable();
+      })
+
+      .createTable('topic_default_questions', (table) => {
+        table
+          .integer('topic_id')
+          .unsigned()
+          .notNullable()
+          .references('id')
+          .inTable('topics')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table
+          .integer('question_id')
+          .unsigned()
+          .notNullable()
+          .references('id')
+          .inTable('topic_questions')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table.primary(['topic_id', 'question_id']);
       })
 
       //Topic Iteration and Questions
@@ -110,7 +151,6 @@ exports.up = (knex) => {
           .inTable('topic_questions')
           .onUpdate('CASCADE')
           .onDelete('CASCADE');
-        table.integer('answer_type').unsigned().notNullable();
         table.primary(['iteration_id', 'question_id']);
       })
   );
@@ -119,10 +159,12 @@ exports.up = (knex) => {
 exports.down = (knex) => {
   return knex.schema
     .dropTableIfExists('topic_iteration_and_questions')
+    .dropTableIfExists('topic_default_questions')
     .dropTableIfExists('topic_questions')
+    .dropTableIfExists('topic_iteration_and_context_responses')
     .dropTableIfExists('topic_iteration')
     .dropTableIfExists('topic_members_junction')
-    .dropTableIfExists('topics_context_junction')
+    .dropTableIfExists('topic_context_junction')
     .dropTableIfExists('topic_context_questions')
     .dropTableIfExists('topics')
     .dropTableIfExists('profiles');

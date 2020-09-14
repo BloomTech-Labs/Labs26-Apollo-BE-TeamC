@@ -6,13 +6,16 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex('topic_questions').insert([
         {
-          question: 'What did you accomplish yesterday?',
+          content: 'What did you accomplish yesterday?',
+          response_type: 'string',
         },
         {
-          question: 'What are you working on today?',
+          content: 'What are you working on today?',
+          response_type: 'string',
         },
         {
-          question: 'Are there any monsters in your path?',
+          content: 'Are there any monsters in your path?',
+          response_type: 'string',
         },
       ]);
     });
