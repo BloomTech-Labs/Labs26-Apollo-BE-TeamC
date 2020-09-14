@@ -8,17 +8,14 @@ exports.seed = function (knex) {
         {
           iteration_id: 1,
           question_id: 1,
-          answer_type: 1,
         },
         {
           iteration_id: 1,
           question_id: 2,
-          answer_type: 1,
         },
         {
           iteration_id: 1,
           question_id: 3,
-          answer_type: 1,
         },
       ]);
     });

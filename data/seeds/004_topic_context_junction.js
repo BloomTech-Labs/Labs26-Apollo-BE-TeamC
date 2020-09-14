@@ -1,10 +1,10 @@
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  return knex('topics_context_junction')
+  return knex('topic_context_junction')
     .truncate()
     .then(function () {
       // Inserts seed entries
-      return knex('topics_context_junction').insert([
+      return knex('topic_context_junction').insert([
         {
           topic_id: 1,
           context_id: 1,
