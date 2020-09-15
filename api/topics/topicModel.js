@@ -56,7 +56,7 @@ const findById = async (id) => {
 
 //posts
 const addContextsToTopic = async (context_questions, newTopicId) => {
-  await context_questions.forEach(async (context) => {
+  for (const context of context_questions) {
     const contextQuestion = await db('topic_context_questions')
       .where({ content: context })
       .first();
@@ -76,11 +76,11 @@ const addContextsToTopic = async (context_questions, newTopicId) => {
         context_id: contextQuestionId,
       });
     }
-  });
+  }
 };
 
 const addDefaultQuestionsToTopic = async (default_questions, newTopicId) => {
-  await default_questions.forEach(async ({ content, response_type }) => {
+  for (const { content, response_type } of default_questions) {
     const defaultQuestion = await db('topic_questions')
       .where({ content, response_type })
       .first();
@@ -100,7 +100,7 @@ const addDefaultQuestionsToTopic = async (default_questions, newTopicId) => {
         question_id: defaultQuestionId,
       });
     }
-  });
+  }
 };
 
 const addTopic = async (topicInfo) => {
