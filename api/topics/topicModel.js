@@ -7,7 +7,31 @@ const findAllTopics = async () => {
 };
 
 const findById = async (id) => {
-  return await db('topics').where({ id: id });
+  const topicInfo = await db('topics').where({ id }).first();
+  const members = await db('topic_members_junction')
+    .where({ topic_id: id })
+    .join('profiles', 'profiles.id', 'topic_members_junction.member_id')
+    .select('profiles.id', 'profiles.name');
+  const contexts = await db('topic_context_junction')
+    .where({ topic_id: id })
+    .join(
+      'topic_context_questions',
+      'topic_context_junction.context_id',
+      'topic_context_questions.id'
+    )
+    .select('topic_context_questions.id', 'topic_context_questions.content');
+  const defaultQuestions = await db('topic_default_questions')
+    .where({ topic_id: id })
+    .join(
+      'topic_questions',
+      'topic_questions.id',
+      'topic_default_questions.question_id'
+    )
+    .select('topic_questions.id', 'topic_questions.content');
+  const iterations = await db('topic_iteration')
+    .where({ topic_id: id })
+    .select('topic_iteration.id', 'topic_iteration.posted_at');
+  return { ...topicInfo, members, contexts, defaultQuestions, iterations };
 };
 
 //posts
