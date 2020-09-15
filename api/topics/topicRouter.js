@@ -1,8 +1,6 @@
 const express = require('express');
 // const authRequired = require('../middleware/authRequired');
-// const Profiles = require('./profileModel');
 const db = require('./topicModel');
-// const dbConfig = require('../../data/db-config');
 const router = express.Router();
 
 //gets
@@ -21,11 +19,11 @@ router.get('/:id', (req, res) => {
   const id = req.params.id;
   db.findById(id)
     .then((topic) => {
-      // if (topic.length > 0) {
-      res.status(200).json(topic);
-      // } else {
-      // res.status(404).json({ message: 'there are no topics here!' });
-      // }
+      if (topic.id) {
+        res.status(200).json(topic);
+      } else {
+        res.status(404).json({ message: 'there are no topics here!' });
+      }
     })
     .catch((error) => {
       console.log('Error getting topic', error);
@@ -35,11 +33,12 @@ router.get('/:id', (req, res) => {
 
 //posts
 router.post('/', (req, res) => {
-  const info = req.body;
-  db.addTopic(info)
-    .then((info) => {
-      console.log(info);
-      res.status(201).json(info);
+  const topicInfo = req.body;
+
+  db.addTopic(topicInfo)
+    .then((topic) => {
+      console.log(topic);
+      res.status(201).json(topic);
     })
     .catch((error) => {
       console.log('Error Posting Topic', error);
