@@ -1,6 +1,5 @@
 const db = require('../../data/db-config');
 
-//gets
 const findAllTopics = async () => {
   return await db('topics');
 };
@@ -47,26 +46,35 @@ const getTopicIterations = async (topicId) => {
 const findById = async (id) => {
   const topicInfo = await db('topics').where({ id }).first();
   const members = await getTopicMembers(id);
-  const contexts = await getTopicContexts(id);
-  const defaultQuestions = await getTopicDefaultQuestions(id);
-  const iterations = await getTopicIterations(id);
+  const context_questions = await getTopicContexts(id);
+  const default_questions = await getTopicDefaultQuestions(id);
+  const topic_iteration_requests = await getTopicIterations(id);
 
-  return { ...topicInfo, members, contexts, defaultQuestions, iterations };
+  return {
+    ...topicInfo,
+    members,
+    context_questions,
+    default_questions,
+    topic_iteration_requests,
+  };
 };
 
-//posts
 const addContextsToTopic = async (context_questions, newTopicId) => {
+  // Loops over the context questions and checks if the already exists in the table
   for (const context of context_questions) {
     const contextQuestion = await db('topic_context_questions')
       .where({ content: context })
       .first();
 
+    // If the question exists then it creates relationship between topic and context question
     if (contextQuestion) {
       await db('topic_context_junction').insert({
         topic_id: newTopicId,
         context_id: contextQuestion.id,
       });
     } else {
+      // If the question doesn't exist, insert it in context question table and
+      // create relationship between topic and context question
       const [contextQuestionId] = await db('topic_context_questions').insert(
         { content: context },
         'id'
@@ -80,17 +88,21 @@ const addContextsToTopic = async (context_questions, newTopicId) => {
 };
 
 const addDefaultQuestionsToTopic = async (default_questions, newTopicId) => {
+  // Loops over the topic questions and checks if the already exists in the table
   for (const { content, response_type } of default_questions) {
     const defaultQuestion = await db('topic_questions')
       .where({ content, response_type })
       .first();
 
+    // If the question exists then it creates relationship between topic and topic question
     if (defaultQuestion) {
       await db('topic_default_questions').insert({
         topic_id: newTopicId,
         question_id: defaultQuestion.id,
       });
     } else {
+      // If the question doesn't exist, insert it in topic question table and
+      // create relationship between topic and topic question
       const [defaultQuestionId] = await db('topic_questions').insert(
         { content, response_type },
         'id'
