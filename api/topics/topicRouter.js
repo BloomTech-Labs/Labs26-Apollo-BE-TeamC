@@ -52,7 +52,7 @@ router.post('/:id/context', (req, res) => {
   if (!context) {
     return res.status(400).json({ message: 'Must include context' });
   }
-  db.addContext(context, topicId)
+  db.addConte(context, topicId)
     .then((context) => {
       console.log(context);
       res.status(201).json(context);
@@ -62,5 +62,10 @@ router.post('/:id/context', (req, res) => {
       res.status(500).json({ message: 'We are sorry, Internal server error.' });
     });
 });
+
+// router.post('/:id/request', (req,res) => {
+//   const topicId = req.params.id;
+//   db.
+// })
 
 module.exports = router;

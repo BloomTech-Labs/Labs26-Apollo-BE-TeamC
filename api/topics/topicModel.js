@@ -123,12 +123,52 @@ const addTopic = async (topicInfo) => {
   return await findById(newTopicId);
 };
 
+const createIteration = async (topicId, topicQuestions, contextResponses) => {
+  const [iterationId] = await db('topic_iteration').insert(
+    {
+      topic_id: topicId,
+    },
+    'id'
+  );
+  for (const topicQuestion of topicQuestions) {
+    const existingQuestion = await db('topic_questions')
+      .where({ content: topicQuestion.content })
+      .first();
+    if (existingQuestion) {
+      await db('topic_iteration_and_questions').insert({
+        iteration_id: iterationId,
+        question_id: existingQuestion.id,
+      });
+    } else {
+      const [topicQuestionId] = await db('topic_questions').insert(
+        {
+          content: topicQuestion.content,
+          answer_type: topicQuestion.answer_type,
+        },
+        'id'
+      );
+      await db('topic_iteration_and_questions').insert({
+        iteration_id: iterationId,
+        question_id: topicQuestionId,
+      });
+    }
+    for (const { id, content } of contextResponses) {
+      await db('topic_iteration_and_context_responses').insert({
+        iteration_id: iterationId,
+        context_id: id,
+        content,
+      });
+    }
+  }
+};
+
 module.exports = {
   findAllTopics,
   findById,
   addTopic,
   addContextsToTopic,
   addDefaultQuestionsToTopic,
+  createIteration,
   getTopicContexts,
   getTopicDefaultQuestions,
   getTopicIterations,
