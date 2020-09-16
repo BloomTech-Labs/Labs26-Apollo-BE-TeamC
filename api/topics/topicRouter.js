@@ -31,6 +31,17 @@ router.get('/:id', (req, res) => {
     });
 });
 
+router.get('/request/:reqId', (req, res) => {
+  const requestId = req.params.reqId;
+  db.getTopicRequestDetailed(requestId).then((requestInfo) => {
+    if (requestInfo) {
+      res.status(200).json(requestInfo);
+    } else {
+      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+    }
+  });
+});
+
 //posts
 router.post('/', (req, res) => {
   const topicInfo = req.body;
@@ -46,26 +57,17 @@ router.post('/', (req, res) => {
     });
 });
 
-router.post('/:id/context', (req, res) => {
-  const context = req.body;
-  const topicId = req.params.id;
-  if (!context) {
-    return res.status(400).json({ message: 'Must include context' });
-  }
-  db.addConte(context, topicId)
-    .then((context) => {
-      console.log(context);
-      res.status(201).json(context);
+router.post('/:topicId/request', (req, res) => {
+  const topicId = req.params.topicId;
+  const { topic_questions, context_responses } = req.body;
+  db.createIteration(topicId, topic_questions, context_responses)
+    .then((request) => {
+      res.status(201).json(request);
     })
     .catch((error) => {
-      console.log('Error Adding Context', error);
+      console.log('Error Posting Topic', error);
       res.status(500).json({ message: 'We are sorry, Internal server error.' });
     });
 });
-
-// router.post('/:id/request', (req,res) => {
-//   const topicId = req.params.id;
-//   db.
-// })
 
 module.exports = router;

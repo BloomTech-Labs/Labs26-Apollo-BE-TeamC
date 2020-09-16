@@ -43,6 +43,40 @@ const getTopicIterations = async (topicId) => {
     .select('topic_iteration.id', 'topic_iteration.posted_at');
 };
 
+const getTopicRequestDetailed = async (iterationId) => {
+  const requestInfo = await db('topic_iteration')
+    .where({
+      id: iterationId,
+    })
+    .first();
+  const context_responses = await db('topic_iteration_and_context_responses')
+    .where({ iteration_id: iterationId })
+    .join(
+      'topic_context_questions',
+      'topic_context_questions.id',
+      'topic_iteration_and_context_responses.context_id'
+    )
+    .select(
+      'topic_context_questions.content as context_question',
+      'topic_iteration_and_context_responses.content as context_response'
+    );
+  const topic_questions = await db('topic_iteration_and_questions')
+    .where({
+      iteration_id: iterationId,
+    })
+    .join(
+      'topic_questions',
+      'topic_questions.id',
+      'topic_iteration_and_questions.question_id'
+    )
+    .select(
+      'topic_questions.id',
+      'topic_questions.content',
+      'topic_questions.response_type'
+    );
+  return { ...requestInfo, context_responses, topic_questions };
+};
+
 const findById = async (id) => {
   const topicInfo = await db('topics').where({ id }).first();
   const members = await getTopicMembers(id);
@@ -155,7 +189,7 @@ const createIteration = async (topicId, topicQuestions, contextResponses) => {
       const [topicQuestionId] = await db('topic_questions').insert(
         {
           content: topicQuestion.content,
-          answer_type: topicQuestion.answer_type,
+          response_type: topicQuestion.response_type,
         },
         'id'
       );
@@ -164,14 +198,15 @@ const createIteration = async (topicId, topicQuestions, contextResponses) => {
         question_id: topicQuestionId,
       });
     }
-    for (const { id, content } of contextResponses) {
-      await db('topic_iteration_and_context_responses').insert({
-        iteration_id: iterationId,
-        context_id: id,
-        content,
-      });
-    }
   }
+  for (const { id, content } of contextResponses) {
+    await db('topic_iteration_and_context_responses').insert({
+      iteration_id: iterationId,
+      context_id: id,
+      content,
+    });
+  }
+  return await getTopicRequestDetailed(iterationId);
 };
 
 module.exports = {
@@ -183,6 +218,7 @@ module.exports = {
   createIteration,
   getTopicContexts,
   getTopicDefaultQuestions,
+  getTopicRequestDetailed,
   getTopicIterations,
   getTopicMembers,
 };
