@@ -21,7 +21,7 @@ module.exports = {
         description: 'Operations for profile',
       },
       {
-        name: 'topics',
+        name: 'topic',
         description: 'Operations for topics',
       },
     ],
