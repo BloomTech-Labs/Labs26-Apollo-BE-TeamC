@@ -21,8 +21,8 @@ module.exports = {
         description: 'Operations for profile',
       },
       {
-        name: 'data',
-        description: 'Operations for data science service',
+        name: 'topics',
+        description: 'Operations for topics',
       },
     ],
     externalDocs: {

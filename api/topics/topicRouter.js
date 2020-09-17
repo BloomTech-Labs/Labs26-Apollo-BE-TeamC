@@ -3,6 +3,75 @@ const express = require('express');
 const db = require('./topicModel');
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Topic:
+ *      type: object
+ *      required:
+ *        - created_by
+ *        - title
+ *        - frequency
+ *        - context_questions
+ *        - default_questions
+ *      properties:
+ *        created_by:
+ *          type: string
+ *          description: This is a foreign key (the okta user ID)
+ *        title:
+ *          type: string
+ *        frequency:
+ *          type: string
+ *        context_questions:
+ *          type: array
+ *          items:
+ *            type: string
+ *        default_questions:
+ *          type: array
+ *          items:
+ *            type: object
+ *            properties:
+ *              content:
+ *                type: string
+ *              response_type:
+ *                type: string
+ *      example:
+ *        created_by: '00uhjfrwdWAQvD8JV4x6'
+ *        title: "Development Team"
+ *        frequency: "Daily"
+ *        context_questions: ["Question 1", "Question 2", "Question 3"]
+ *        default_questions: ["Question 1", "Question 2", "Question 3"]
+ *
+ * /topic/{id}:
+ *  get:
+ *    description: Returns topic and details
+ *    summary: Get a topic
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - topic
+ *    responses:
+ *      200:
+ *        description: array of profiles
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/Topic'
+ *              example:
+ *                - created_by: '00uhjfrwdWAQvD8JV4x6'
+ *                  title: "Development Team"
+ *                  frequency: "Daily"
+ *                  context_questions: ["Question 1", "Question 2", "Question 3"]
+ *                  default_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      403:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ */
+
 //gets
 router.get('/', (req, res) => {
   db.findAllTopics()
