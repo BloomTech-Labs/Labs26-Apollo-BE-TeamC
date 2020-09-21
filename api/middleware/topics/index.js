@@ -1,4 +1,9 @@
 const Profiles = require('../../profile/profileModel');
+const Topics = require('../../topics/topicModel');
+
+// Constant values
+const requestFrequencies = ['Daily', 'Weekly', 'Monthly'];
+const responseTypes = ['Rating', 'String', 'Url', 'Boolean'];
 
 // Validates values in Topic POST Request
 const validateTopicBody = async (req, res, next) => {
@@ -9,9 +14,6 @@ const validateTopicBody = async (req, res, next) => {
     context_questions,
     default_questions,
   } = req.body;
-
-  const requestFrequencies = ['Daily', 'Weekly', 'Monthly'];
-  const responseTypes = ['Rating', 'String', 'Url', 'Boolean'];
 
   if (!created_by || !title) {
     return res
@@ -54,7 +56,7 @@ const validateTopicBody = async (req, res, next) => {
     if (!question) {
       return res
         .status(400)
-        .json({ error: 'Each context question must have content value' });
+        .json({ error: 'Each context question must have a content value' });
     }
   });
 
@@ -76,9 +78,50 @@ const validateTopicBody = async (req, res, next) => {
   next();
 };
 
-// TODO
 const validateRequestBody = async (req, res, next) => {
-  return null;
+  const { topicId } = req.params;
+  const { topic_questions, context_responses } = req.body;
+
+  const topic = await Topics.findById(topicId);
+
+  if (!topic) {
+    return res.status(404).json({ error: 'Could not find topic with that id' });
+  }
+
+  if (!context_responses || !context_responses.length) {
+    return res
+      .status(400)
+      .json({ error: 'Request must have context_responses' });
+  }
+
+  if (!topic_questions || !topic_questions.length) {
+    return res.status(400).json({ error: 'Request must have topic_questions' });
+  }
+
+  context_responses.forEach(({ id, content }) => {
+    if (!id || !content) {
+      return res.status(400).json({
+        error: 'Each context response must have content and id values',
+      });
+    }
+  });
+
+  topic_questions.forEach(({ content, response_type }) => {
+    if (!content || !response_type) {
+      return res.status(400).json({
+        error: 'Topic question must have content and a response_type values',
+      });
+    }
+
+    if (!responseTypes.includes(response_type)) {
+      return res.status(400).json({
+        error:
+          'Topic question response_type must be Rating, String, Url, or Boolean',
+      });
+    }
+  });
+
+  next();
 };
 
 module.exports = {

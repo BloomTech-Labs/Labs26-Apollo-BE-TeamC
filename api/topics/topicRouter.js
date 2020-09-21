@@ -1,5 +1,9 @@
 const express = require('express');
 // const authRequired = require('../middleware/authRequired');
+const {
+  validateTopicBody,
+  validateRequestBody,
+} = require('../middleware/topics/');
 const db = require('./topicModel');
 const router = express.Router();
 
@@ -124,7 +128,7 @@ const router = express.Router();
  */
 
 //posts
-router.post('/', (req, res) => {
+router.post('/', validateTopicBody, (req, res) => {
   const topicInfo = req.body;
 
   db.addTopic(topicInfo)
@@ -226,7 +230,7 @@ router.get('/:id', (req, res) => {
  *        $ref: '#/components/responses/UnauthorizedError'
  */
 
-router.post('/:topicId/request', (req, res) => {
+router.post('/:topicId/request', validateRequestBody, (req, res) => {
   const topicId = req.params.topicId;
   const { topic_questions, context_responses } = req.body;
   db.createIteration(topicId, topic_questions, context_responses)
