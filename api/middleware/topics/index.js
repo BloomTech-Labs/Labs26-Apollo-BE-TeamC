@@ -84,7 +84,7 @@ const validateRequestBody = async (req, res, next) => {
 
   const topic = await Topics.findById(topicId);
 
-  if (!topic) {
+  if (!topic.id) {
     return res.status(404).json({ error: 'Could not find topic with that id' });
   }
 
