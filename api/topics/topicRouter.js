@@ -198,6 +198,33 @@ router.get('/:id', (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ * /topic/{topicId}/join:
+ *  post:
+ *    description: Used for adding the Users_Id to the Topic's Members List.
+ *    summary: Add the user to the Topic's Members List!
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - topic
+ *    responses:
+ *      200:
+ *        description: Needed information to add user to topic member's list, Returns a message.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Topic'
+ *              example:
+ *                  - "profile_id": "00ulthapbErVUwVJy4x6"
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      403:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ */
+
 router.post('/:id/join', (req, res) => {
   const id = req.params.id;
   const profileId = req.body.profile_id;
