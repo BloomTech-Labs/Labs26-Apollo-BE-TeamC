@@ -1,62 +1,26 @@
 const request = require('supertest');
-const express = require('express');
-const topicDb = require('../../api/topics/topicModel');
-const topicRouter = require('../../api/topics/topicRouter');
-const server = express();
-server.use(express.json());
+// const topicDb = require('../../api/topics/topicModel');
+// const topicRouter = require('../../api/topics/topicRouter');
+const server = require('../../api/app.js');
 
-jest.mock('../../api/topics/topicModel');
-// mock the auth middleware completely
-jest.mock('../../api/middleware/authRequired', () =>
-  jest.fn((req, res, next) => next())
-);
+//real endpoint tests
 
-describe('Topic router endpoints', () => {
-  beforeAll(() => {
-    // This is the module/route being tested
-    server.use('/topics', topicRouter);
-    jest.clearAllMocks();
-  });
-
-  describe('GET /topics', () => {
-    it('should return 200', async () => {
-      topicDb.findAllTopics.mockResolvedValue();
-      const res = await request(server).get('/topics');
-
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(0);
-      expect(topicDb.findAllTopics.mock.calls.length).toBe(1);
-    });
-  });
-
-  describe('GET /topics/:id', () => {
-    it('should return 200 when topic is found', async () => {
-      topicDb.findById.mockResolvedValue({
-        id: 2,
-        created_by: '00ulthapbErVUwVJy4x6',
-        frequency: 'daily',
-        title: 'Testing Title',
+describe('topics/ get endpoint', () => {
+  //CHECKING STATUS CODE!
+  it('should return 200', () => {
+    return request(server)
+      .get('/topics/')
+      .then((res) => {
+        expect(res.status).toBe(200);
       });
-      const res = await request(server).get('/topics/2');
-
-      expect(res.status).toBe(200);
-      expect(res.body.title).toBe('Testing Title');
-      expect(topicDb.findById.mock.calls.length).toBe(1);
-    });
-
-    it('should return 404 when no topic found', async () => {
-      topicDb.findById.mockResolvedValue({
-        message: 'there are no topics here!',
-      });
-      const res = await request(server).get('/topics/9999');
-      expect(res.status).toBe(404);
-      expect(res.body.message).toBe('there are no topics here!');
-    });
   });
+});
 
-  describe('POST /topics', () => {
-    it('should return 201 when a topic is created', async () => {
-      const topic = {
+describe('post a topic', () => {
+  it('should return a 201 status code/create a topic', () => {
+    return request(server)
+      .post('/topics/')
+      .send({
         created_by: '00ulthapbErVUwVJy4x6',
         frequency: 'Monthly',
         title: 'Test003',
@@ -79,15 +43,52 @@ describe('Topic router endpoints', () => {
             response_type: 'String',
           },
         ],
-      };
-      topicDb.findById.mockResolvedValue(undefined);
-      topicDb.addTopic.mockResolvedValue([
-        Object.assign({ id: '77777777' }, topic),
-      ]);
-      const res = await request(server).post('/topics').send(topic);
-
-      expect(res.status).toBe(201);
-      expect(topicDb.addTopic.mock.calls.length).toBe(1);
-    });
+      })
+      .then((res) => {
+        expect(res.status).toBe(201);
+        expect(res.body.frequency).toBe('Monthly');
+        expect(res.type).toMatch(/json/i);
+      });
   });
 });
+
+describe('Creating of topics', () => {
+  it('Should create a Topic Request', () => {
+    return request(server)
+      .post('/topics/1/request')
+      .send({
+        topic_questions: [
+          {
+            content: 'What did you accomplish yesterday?',
+            response_type: 'string',
+          },
+          {
+            content: 'Why are you alive man?',
+            response_type: 'string',
+          },
+          {
+            content: 'Have you seen my dog?',
+            response_type: 'string',
+          },
+        ],
+        context_responses: [
+          {
+            id: 1,
+            content: 'Get something deployed',
+          },
+          {
+            id: 2,
+            content: 'Get something returning',
+          },
+          {
+            id: 3,
+            content: 'We have a nice dmo coming up! be ready',
+          },
+        ],
+      })
+      .then((res) => {
+        expect(res.status).toBe(201);
+      });
+  });
+});
+
