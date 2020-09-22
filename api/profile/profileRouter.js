@@ -30,7 +30,72 @@ const router = express.Router();
  *        email: 'frank@example.com'
  *        name: 'Frank Martinez'
  *        avatarUrl: 'https://s3.amazonaws.com/uifaces/faces/twitter/hermanobrother/128.jpg'
- *
+ */
+
+/**
+ * @swagger
+ * /profile:
+ *  post:
+ *    summary: Add a profile
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - profile
+ *    requestBody:
+ *      description: Profile object to to be added
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/Profile'
+ *    responses:
+ *      400:
+ *        $ref: '#/components/responses/BadRequest'
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      404:
+ *        description: 'Profile not found'
+ *      200:
+ *        description: A profile object
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A message about the result
+ *                  example: profile created
+ *                profile:
+ *                  $ref: '#/components/schemas/Profile'
+ */
+router.post('/', authRequired, async (req, res) => {
+  const profile = req.body;
+  if (profile) {
+    const id = profile.id || 0;
+    try {
+      await Profiles.findById(id).then(async (pf) => {
+        if (pf == undefined) {
+          //profile not found so lets insert it
+          await Profiles.create(profile).then((profile) =>
+            res
+              .status(200)
+              .json({ message: 'profile created', profile: profile[0] })
+          );
+        } else {
+          res.status(400).json({ message: 'profile already exists' });
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({ message: e.message });
+    }
+  } else {
+    res.status(404).json({ message: 'Profile missing' });
+  }
+});
+
+/**
+ * @swagger
  * /profiles:
  *  get:
  *    description: Returns a list of profiles
@@ -125,26 +190,20 @@ router.get('/:id', authRequired, function (req, res) {
 
 /**
  * @swagger
- * /profile:
- *  post:
- *    summary: Add a profile
+ * /profile/{id}:
+ *  delete:
+ *    summary: Remove a profile
  *    security:
  *      - okta: []
  *    tags:
  *      - profile
- *    requestBody:
- *      description: Profile object to to be added
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/Profile'
+ *    parameters:
+ *      - $ref: '#/components/parameters/profileId'
  *    responses:
- *      400:
- *        $ref: '#/components/responses/BadRequest'
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      404:
- *        description: 'Profile not found'
+ *        $ref: '#/components/responses/NotFound'
  *      200:
  *        description: A profile object
  *        content:
@@ -155,35 +214,28 @@ router.get('/:id', authRequired, function (req, res) {
  *                message:
  *                  type: string
  *                  description: A message about the result
- *                  example: profile created
+ *                  example: Profile '00uhjfrwdWAQvD8JV4x6' was deleted.
  *                profile:
  *                  $ref: '#/components/schemas/Profile'
  */
-router.post('/', authRequired, async (req, res) => {
-  const profile = req.body;
-  if (profile) {
-    const id = profile.id || 0;
-    try {
-      await Profiles.findById(id).then(async (pf) => {
-        if (pf == undefined) {
-          //profile not found so lets insert it
-          await Profiles.create(profile).then((profile) =>
-            res
-              .status(200)
-              .json({ message: 'profile created', profile: profile[0] })
-          );
-        } else {
-          res.status(400).json({ message: 'profile already exists' });
-        }
+router.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  try {
+    Profiles.findById(id).then((profile) => {
+      Profiles.remove(profile.id).then(() => {
+        res
+          .status(200)
+          .json({ message: `Profile '${id}' was deleted.`, profile: profile });
       });
-    } catch (e) {
-      console.error(e);
-      res.status(500).json({ message: e.message });
-    }
-  } else {
-    res.status(404).json({ message: 'Profile missing' });
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Could not delete profile with ID: ${id}`,
+      error: err.message,
+    });
   }
 });
+
 /**
  * @swagger
  * /profile:
@@ -243,53 +295,6 @@ router.put('/', authRequired, (req, res) => {
           error: err.message,
         });
       });
-  }
-});
-/**
- * @swagger
- * /profile/{id}:
- *  delete:
- *    summary: Remove a profile
- *    security:
- *      - okta: []
- *    tags:
- *      - profile
- *    parameters:
- *      - $ref: '#/components/parameters/profileId'
- *    responses:
- *      401:
- *        $ref: '#/components/responses/UnauthorizedError'
- *      404:
- *        $ref: '#/components/responses/NotFound'
- *      200:
- *        description: A profile object
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                message:
- *                  type: string
- *                  description: A message about the result
- *                  example: Profile '00uhjfrwdWAQvD8JV4x6' was deleted.
- *                profile:
- *                  $ref: '#/components/schemas/Profile'
- */
-router.delete('/:id', (req, res) => {
-  const id = req.params.id;
-  try {
-    Profiles.findById(id).then((profile) => {
-      Profiles.remove(profile.id).then(() => {
-        res
-          .status(200)
-          .json({ message: `Profile '${id}' was deleted.`, profile: profile });
-      });
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: `Could not delete profile with ID: ${id}`,
-      error: err.message,
-    });
   }
 });
 
