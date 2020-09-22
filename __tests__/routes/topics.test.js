@@ -52,7 +52,7 @@ describe('post a topic', () => {
   });
 });
 
-describe('Creating of topics', () => {
+describe('Making an instance of a topic/requestt', () => {
   it('Should create a Topic Request', () => {
     return request(server)
       .post('/topics/1/request')
@@ -88,7 +88,8 @@ describe('Creating of topics', () => {
       })
       .then((res) => {
         expect(res.status).toBe(201);
+        expect(res.body.topic_id).toBe(1);
+        expect(res.type).toMatch(/json/i);
       });
   });
 });
-
