@@ -189,12 +189,26 @@ router.get('/:id', (req, res) => {
       if (topic.id) {
         res.status(200).json(topic);
       } else {
-        res.status(404).json({ message: 'there are no topics here!' });
+        res.status(404).json({ message: 'there are no topics here.' });
       }
     })
     .catch((error) => {
       console.log('Error getting topic', error);
       res.status(500).json({ message: 'We are sorry, Internal server error.' });
+    });
+});
+
+router.post('/:id/join', (req, res) => {
+  const id = req.params.id;
+  const profileId = req.body.profile_id;
+  db.addMemberToTopic(id, profileId)
+    .then(() => {
+      res
+        .status(200)
+        .json({ message: `Added Member ${profileId} the Topic ${id}.` });
+    })
+    .catch((err) => {
+      res.status(500).json(err);
     });
 });
 

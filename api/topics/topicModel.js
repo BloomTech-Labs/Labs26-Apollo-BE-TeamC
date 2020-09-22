@@ -8,7 +8,7 @@ const getTopicMembers = async (topicId) => {
   return await db('topic_members_junction')
     .where({ topic_id: topicId })
     .join('profiles', 'profiles.id', 'topic_members_junction.member_id')
-    .select('profiles.id', 'profiles.name');
+    .select('profiles.id', 'profiles.name', 'profiles.avatarUrl');
 };
 
 const getTopicContexts = async (topicId) => {
@@ -91,6 +91,13 @@ const findById = async (id) => {
     default_questions,
     topic_iteration_requests,
   };
+};
+
+const addMemberToTopic = async (topicId, profileId) => {
+  await db('topic_members_junction').insert({
+    topic_id: topicId,
+    member_id: profileId,
+  });
 };
 
 const addContextsToTopic = async (context_questions, newTopicId) => {
@@ -221,4 +228,5 @@ module.exports = {
   getTopicRequestDetailed,
   getTopicIterations,
   getTopicMembers,
+  addMemberToTopic,
 };
