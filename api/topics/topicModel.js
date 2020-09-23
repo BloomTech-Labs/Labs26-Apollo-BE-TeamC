@@ -11,6 +11,8 @@ const getTopicMembers = async (topicId) => {
     .select('profiles.id', 'profiles.name', 'profiles.avatarUrl');
 };
 
+
+
 const getTopicContexts = async (topicId) => {
   return await db('topic_context_junction')
     .where({ topic_id: topicId })

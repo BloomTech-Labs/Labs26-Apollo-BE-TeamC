@@ -1,6 +1,6 @@
 const express = require('express');
 // const authRequired = require('../middleware/authRequired');
-const db = require('./topicModel');
+const Topics = require('./topicModel');
 const router = express.Router();
 
 /**
@@ -127,26 +127,28 @@ const router = express.Router();
 router.post('/', (req, res) => {
   const topicInfo = req.body;
 
-  db.addTopic(topicInfo)
+  Topics.addTopic(topicInfo)
     .then((topic) => {
       console.log(topic);
       res.status(201).json(topic);
     })
     .catch((error) => {
-      console.log('Error Posting Topic', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
 //gets
 router.get('/', (req, res) => {
-  db.findAllTopics()
+  Topics.findAllTopics()
     .then((topics) => {
       res.status(200).json(topics);
     })
     .catch((error) => {
-      console.log('Error getting topics', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
@@ -184,7 +186,7 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  db.findById(id)
+  Topics.findById(id)
     .then((topic) => {
       if (topic.id) {
         res.status(200).json(topic);
@@ -193,10 +195,13 @@ router.get('/:id', (req, res) => {
       }
     })
     .catch((error) => {
-      console.log('Error getting topic', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
+
+
 
 /**
  * @swagger
@@ -228,14 +233,16 @@ router.get('/:id', (req, res) => {
 router.post('/:id/join', (req, res) => {
   const id = req.params.id;
   const profileId = req.body.profile_id;
-  db.addMemberToTopic(id, profileId)
+  Topics.addMemberToTopic(id, profileId)
     .then(() => {
       res
         .status(200)
         .json({ message: `Added Member ${profileId} the Topic ${id}.` });
     })
-    .catch((err) => {
-      res.status(500).json(err);
+    .catch((error) => {
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
@@ -270,13 +277,14 @@ router.post('/:id/join', (req, res) => {
 router.post('/:topicId/request', (req, res) => {
   const topicId = req.params.topicId;
   const { topic_questions, context_responses } = req.body;
-  db.createIteration(topicId, topic_questions, context_responses)
+  Topics.createIteration(topicId, topic_questions, context_responses)
     .then((request) => {
       res.status(201).json(request);
     })
     .catch((error) => {
-      console.log('Error Posting Topic', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
@@ -314,7 +322,7 @@ router.post('/:topicId/request', (req, res) => {
 
 router.get('/request/:reqId', (req, res) => {
   const requestId = req.params.reqId;
-  db.getTopicRequestDetailed(requestId).then((requestInfo) => {
+  Topics.getTopicRequestDetailed(requestId).then((requestInfo) => {
     if (requestInfo) {
       res.status(200).json(requestInfo);
     } else {

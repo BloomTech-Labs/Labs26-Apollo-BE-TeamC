@@ -298,4 +298,43 @@ router.put('/', authRequired, (req, res) => {
   }
 });
 
+// move to profile router
+router.get('/:id/my-created-topics', (req, res) => {
+  const id = req.params.id;
+  Profiles.findCreatedTopics(id)
+    .then((topics) => {
+      if (topics.length == 0) {
+        res
+          .status(404)
+          .json({ message: 'There are no Topics associated with this user.' });
+      }
+      res.status(200).json({ topics });
+    })
+    .catch((error) => {
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error., ${error}` });
+    });
+});
+
+// move to profile router
+router.get('/:id/my-joined-topics', (req, res) => {
+  const id = req.params.id;
+  Profiles.findJoinedTopics(id)
+    .then((topics) => {
+      if (topics.length == 0) {
+        res
+          .status(404)
+          .json({ message: 'You have not joined any Topics yet.' });
+      } else {
+        res.status(200).json({ topics });
+      }
+    })
+    .catch((error) => {
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error., ${error}` });
+    });
+});
+
 module.exports = router;
