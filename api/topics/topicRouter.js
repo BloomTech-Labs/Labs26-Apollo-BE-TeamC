@@ -207,8 +207,6 @@ router.get('/:id', (req, res) => {
     });
 });
 
-
-
 /**
  * @swagger
  * /topic/{topicId}/join:
