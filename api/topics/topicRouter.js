@@ -1,5 +1,6 @@
 const express = require('express');
 // const authRequired = require('../middleware/authRequired');
+
 const Topics = require('./topicModel');
 const {
   validateTopicBody,
@@ -205,6 +206,8 @@ router.get('/:id', (req, res) => {
         .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
+
+
 
 /**
  * @swagger
