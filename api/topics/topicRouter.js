@@ -193,12 +193,53 @@ router.get('/:id', (req, res) => {
       if (topic.id) {
         res.status(200).json(topic);
       } else {
-        res.status(404).json({ message: 'there are no topics here!' });
+        res.status(404).json({ message: 'there are no topics here.' });
       }
     })
     .catch((error) => {
       console.log('Error getting topic', error);
       res.status(500).json({ message: 'We are sorry, Internal server error.' });
+    });
+});
+
+/**
+ * @swagger
+ * /topic/{topicId}/join:
+ *  post:
+ *    description: Used for adding the Users_Id to the Topic's Members List.
+ *    summary: Add the user to the Topic's Members List!
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - topic
+ *    responses:
+ *      200:
+ *        description: Needed information to add user to topic member's list, Returns a message.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Topic'
+ *              example:
+ *                  - "profile_id": "00ulthapbErVUwVJy4x6"
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      403:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ */
+
+router.post('/:id/join', (req, res) => {
+  const id = req.params.id;
+  const profileId = req.body.profile_id;
+  db.addMemberToTopic(id, profileId)
+    .then(() => {
+      res
+        .status(200)
+        .json({ message: `Added Member ${profileId} the Topic ${id}.` });
+    })
+    .catch((err) => {
+      res.status(500).json(err);
     });
 });
 
