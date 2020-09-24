@@ -2,20 +2,16 @@ module.exports = {
   definition: {
     openapi: '3.0.1',
     info: {
-      title: 'Lambda Labs Starter API',
+      title: 'Apollo App Documentation',
       version: '1.0.0',
       description:
-        'A basic API server to act as a starting point for Labs projects',
+        'Here lies the documentation for the Apollo App. We display endpoints with required parameters and the data each endpoint returns.',
       license: {
         name: 'MIT',
         url: 'https://en.wikipedia.org/wiki/MIT_License',
       },
     },
     tags: [
-      {
-        name: 'status',
-        description: 'Everything about your status',
-      },
       {
         name: 'profile',
         description: 'Operations for profile',
@@ -26,8 +22,9 @@ module.exports = {
       },
     ],
     externalDocs: {
-      description: 'Data Science scaffold service docs',
-      url: 'https://ds.labsscaffolding.dev/',
+      description: 'Apollo Team Github',
+      url:
+        'https://github.com/orgs/Lambda-School-Labs/teams/labs26-apollo-teamc/repositories',
     },
     components: {
       securitySchemes: {
