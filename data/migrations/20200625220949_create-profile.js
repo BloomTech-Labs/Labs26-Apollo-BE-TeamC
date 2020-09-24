@@ -10,7 +10,7 @@ exports.up = (knex) => {
         table.timestamps(true, true);
       })
 
-      //topics
+      // Topics
       .createTable('topics', (table) => {
         table.increments();
         table
@@ -25,14 +25,14 @@ exports.up = (knex) => {
         table.string('title').notNullable();
       })
 
-      //topic context questions
+      // Topic Context Questions
       .createTable('topic_context_questions', (table) => {
         table.increments();
         table.string('content').notNullable();
       })
 
       // Junctions
-      //Topics & Contexts junction
+      // Topics & Contexts Junction
       .createTable('topic_context_junction', (table) => {
         table
           .integer('topic_id')
@@ -53,7 +53,7 @@ exports.up = (knex) => {
         table.primary(['topic_id', 'context_id']);
       })
 
-      //Topics & Members Junctions
+      // Topics & Members Junctions
       .createTable('topic_members_junction', (table) => {
         table
           .integer('topic_id')
@@ -88,6 +88,7 @@ exports.up = (knex) => {
         table.timestamp('posted_at').defaultTo(knex.fn.now());
       })
 
+      // Topic Iteration & Context Responses
       .createTable('topic_iteration_and_context_responses', (table) => {
         table
           .integer('iteration_id')
@@ -108,13 +109,14 @@ exports.up = (knex) => {
         table.primary(['iteration_id', 'context_id']);
       })
 
-      //questions for the topic
+      // Topic Questions
       .createTable('topic_questions', (table) => {
         table.increments();
         table.string('content').notNullable();
         table.string('response_type').notNullable();
       })
 
+      // Topic Default Questions
       .createTable('topic_default_questions', (table) => {
         table
           .integer('topic_id')
@@ -135,7 +137,7 @@ exports.up = (knex) => {
         table.primary(['topic_id', 'question_id']);
       })
 
-      //Topic Iteration and Questions
+      // Topic Iteration and Questions
       .createTable('topic_iteration_and_questions', (table) => {
         table
           .integer('iteration_id')
@@ -154,6 +156,7 @@ exports.up = (knex) => {
         table.primary(['iteration_id', 'question_id']);
       })
 
+      // Topic Question Replies
       .createTable('topic_question_replies', (table) => {
         table.increments();
         table.timestamp('posted_at').defaultTo(knex.fn.now());
@@ -182,6 +185,7 @@ exports.up = (knex) => {
         table.string('content').notNullable();
       })
 
+      // Topic Reply Thread
       .createTable('topic_reply_thread', (table) => {
         table.timestamp('posted_at').defaultTo(knex.fn.now());
         table

@@ -16,6 +16,14 @@ exports.seed = function (knex) {
     .del()
     .then(function () {
       // Inserts seed entries
-      return knex('profiles').insert(profiles);
+      return knex('profiles').insert([
+        ...profiles,
+        {
+          id: '00ultwew80Onb2vOT4x6',
+          email: 'llama002@maildrop.cc',
+          name: 'Test002 User',
+          avatarUrl: faker.image.avatar(),
+        },
+      ]);
     });
 };

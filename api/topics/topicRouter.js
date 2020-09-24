@@ -284,47 +284,4 @@ router.post('/:topicId/request', validateRequestBody, (req, res) => {
     });
 });
 
-/**
- * @swagger
- * /topic/request/{requestId}:
- *  get:
- *    description: Calling to this endpoint will allow the dashboard to fill up with Context Questions/Responses (left side of Hi-FI), And recently created Topic_questions.
- *    summary: Returns topic request for users to access!
- *    security:
- *      - okta: []
- *    tags:
- *      - topic
- *    responses:
- *      200:
- *        description:
- *        content:
- *          application/json:
- *            schema:
- *              type: array
- *              items:
- *                $ref: '#/components/schemas/Topic'
- *              example:
- *                - id: 5
- *                  topic_id: 1
- *                  posted_at: "2020-09-16T20:40:42.319Z"
- *                  context_responses: [{context_question: "Question Text", context_response: "response"}, {context_question: "Question Text", context_response: "response"}, {context_question: "Question Text", context_response: "response"}]
- *                  topic_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
- *      401:
- *        $ref: '#/components/responses/UnauthorizedError'
- *      403:
- *        $ref: '#/components/responses/UnauthorizedError'
- *
- */
-
-router.get('/request/:reqId', (req, res) => {
-  const requestId = req.params.reqId;
-  db.getTopicRequestDetailed(requestId).then((requestInfo) => {
-    if (requestInfo) {
-      res.status(200).json(requestInfo);
-    } else {
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
-    }
-  });
-});
-
 module.exports = router;
