@@ -153,11 +153,62 @@ exports.up = (knex) => {
           .onDelete('CASCADE');
         table.primary(['iteration_id', 'question_id']);
       })
+
+      .createTable('topic_question_replies', (table) => {
+        table.increments();
+        table.timestamp('posted_at').defaultTo(knex.fn.now());
+        table
+          .integer('iteration_id')
+          .unsigned()
+          .references('id')
+          .inTable('topic_iteration')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table
+          .integer('question_id')
+          .unsigned()
+          .references('id')
+          .inTable('topic_questions')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table
+          .string('profile_id')
+          .unsigned()
+          .notNullable()
+          .references('id')
+          .inTable('profiles')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table.string('content').notNullable();
+      })
+
+      .createTable('topic_reply_thread', (table) => {
+        table.timestamp('posted_at').defaultTo(knex.fn.now());
+        table
+          .integer('reply_id')
+          .unsigned()
+          .references('id')
+          .inTable('topic_question_replies')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table
+          .string('profile_id')
+          .unsigned()
+          .notNullable()
+          .references('id')
+          .inTable('profiles')
+          .onUpdate('CASCADE')
+          .onDelete('CASCADE');
+        table.string('content').notNullable();
+        table.primary(['reply_id', 'profile_id']);
+      })
   );
 };
 
 exports.down = (knex) => {
   return knex.schema
+    .dropTableIfExists('topic_reply_thread')
+    .dropTableIfExists('topic_question_replies')
     .dropTableIfExists('topic_iteration_and_questions')
     .dropTableIfExists('topic_default_questions')
     .dropTableIfExists('topic_questions')
