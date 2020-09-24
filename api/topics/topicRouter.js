@@ -160,6 +160,16 @@ router.get('/', (req, res) => {
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    topicId:
+ *      name: id
+ *      in: path
+ *      description: ID of the topic to display individual topics.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/{id}:
  *  get:
  *    description: By passing in a "topic id" as id, it will return the topic and details
@@ -168,6 +178,8 @@ router.get('/', (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
  *    responses:
  *      200:
  *        description:
@@ -209,6 +221,16 @@ router.get('/:id', (req, res) => {
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    topicId:
+ *      name: id
+ *      in: path
+ *      description: ID of the topic that you want to join.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/{topicId}/join:
  *  post:
  *    description: Used for adding the Users_Id to the Topic's Members List.
@@ -217,6 +239,8 @@ router.get('/:id', (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
  *    responses:
  *      200:
  *        description: Needed information to add user to topic member's list, Returns a message.
@@ -252,6 +276,16 @@ router.post('/:id/join', (req, res) => {
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    topicId:
+ *      name: id
+ *      in: path
+ *      description: ID of the topic that you want to join.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/{topicId}/request:
  *  post:
  *    description: Used for creating an Iteration or a "Request" for users to join in on and answer questions.
@@ -260,6 +294,8 @@ router.post('/:id/join', (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
  *    responses:
  *      201:
  *        description: Needed information to post a request, Returns request Information.
@@ -294,6 +330,16 @@ router.post('/:topicId/request', validateRequestBody, (req, res) => {
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    requestId:
+ *      name: id
+ *      in: path
+ *      description: ID of the request, returning the iteration/request made from the initial topic.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/request/{requestId}:
  *  get:
  *    description: Calling to this endpoint will allow the dashboard to fill up with Context Questions/Responses (left side of Hi-FI), And recently created Topic_questions.
@@ -302,6 +348,8 @@ router.post('/:topicId/request', validateRequestBody, (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/requestId'
  *    responses:
  *      200:
  *        description:
