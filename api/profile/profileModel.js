@@ -40,6 +40,19 @@ const findOrCreateProfile = async (profileObj) => {
   }
 };
 
+const findCreatedTopics = async (profileId) => {
+  return await db('topics').where({ created_by: profileId });
+};
+
+const findJoinedTopics = async (profileId) => {
+  return await db('topic_members_junction')
+    .where({
+      member_id: profileId,
+    })
+    .join('topics', 'topic_members_junction.topic_id', 'topics.id')
+    .select('topics.id as topic_id', 'topics.title');
+};
+
 module.exports = {
   findAll,
   findBy,
@@ -48,4 +61,6 @@ module.exports = {
   update,
   remove,
   findOrCreateProfile,
+  findJoinedTopics,
+  findCreatedTopics,
 };

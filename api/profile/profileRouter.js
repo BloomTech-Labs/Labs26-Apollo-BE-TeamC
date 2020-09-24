@@ -298,4 +298,120 @@ router.put('/', authRequired, (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * components:
+ *  parameters:
+ *    profileId:
+ *      name: id
+ *      in: path
+ *      description: ID of the profile's topics to return.
+ *      required: true
+ *      example: 00uhjfrwdWAQvD8JV4x6
+ *      schema:
+ *        type: string
+ *
+ * /profile/{id}/my-created-topics:
+ *  get:
+ *    summary: Visit the topics you have created
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - profile
+ *    parameters:
+ *      - $ref: '#/components/parameters/profileId'
+ *    responses:
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      404:
+ *        $ref: '#/components/responses/NotFound'
+ *      200:
+ *        description: A list of objects of topics associated with your ID
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                topics:
+ *                  type: array
+ *                  description: an array of topics associated
+ *                  example: [{id : 1, created_by: id, frequency: string, title: string}]
+ */
+
+router.get('/:id/my-created-topics', (req, res) => {
+  const id = req.params.id;
+  Profiles.findCreatedTopics(id)
+    .then((topics) => {
+      if (topics.length == 0) {
+        res
+          .status(404)
+          .json({ message: 'There are no Topics associated with this user.' });
+      }
+      res.status(200).json({ topics });
+    })
+    .catch((error) => {
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error., ${error}` });
+    });
+});
+
+/**
+ * @swagger
+ * components:
+ *  parameters:
+ *    profileId:
+ *      name: id
+ *      in: path
+ *      description: ID of the profile's joined topics to return.
+ *      required: true
+ *      example: 00uhjfrwdWAQvD8JV4x6
+ *      schema:
+ *        type: string
+ *
+ * /profile/{id}/my-joined-topics:
+ *  get:
+ *    summary: Visit the topics you have joined
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - profile
+ *    parameters:
+ *      - $ref: '#/components/parameters/profileId'
+ *    responses:
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      404:
+ *        $ref: '#/components/responses/NotFound'
+ *      200:
+ *        description: A list of objects of topics associated with your ID that you have joined.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                topics:
+ *                  type: array
+ *                  description: an array of topics associated
+ *                  example: [{topic_id : 1, title: string}]
+ */
+router.get('/:id/my-joined-topics', (req, res) => {
+  const id = req.params.id;
+  Profiles.findJoinedTopics(id)
+    .then((topics) => {
+      if (topics.length == 0) {
+        res
+          .status(404)
+          .json({ message: 'You have not joined any Topics yet.' });
+      } else {
+        res.status(200).json({ topics });
+      }
+    })
+    .catch((error) => {
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error., ${error}` });
+    });
+});
+
 module.exports = router;

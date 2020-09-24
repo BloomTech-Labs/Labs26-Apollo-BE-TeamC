@@ -1,10 +1,12 @@
 const express = require('express');
 // const authRequired = require('../middleware/authRequired');
+
+const Topics = require('./topicModel');
 const {
   validateTopicBody,
   validateRequestBody,
 } = require('../middleware/topics/');
-const db = require('./topicModel');
+
 const router = express.Router();
 
 /**
@@ -131,31 +133,43 @@ const router = express.Router();
 router.post('/', validateTopicBody, (req, res) => {
   const topicInfo = req.body;
 
-  db.addTopic(topicInfo)
+  Topics.addTopic(topicInfo)
     .then((topic) => {
       console.log(topic);
       res.status(201).json(topic);
     })
     .catch((error) => {
-      console.log('Error Posting Topic', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
 //gets
 router.get('/', (req, res) => {
-  db.findAllTopics()
+  Topics.findAllTopics()
     .then((topics) => {
       res.status(200).json(topics);
     })
     .catch((error) => {
-      console.log('Error getting topics', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    topicId:
+ *      name: id
+ *      in: path
+ *      description: ID of the topic to display individual topics.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/{id}:
  *  get:
  *    description: By passing in a "topic id" as id, it will return the topic and details
@@ -164,6 +178,8 @@ router.get('/', (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
  *    responses:
  *      200:
  *        description:
@@ -188,7 +204,7 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  db.findById(id)
+  Topics.findById(id)
     .then((topic) => {
       if (topic.id) {
         res.status(200).json(topic);
@@ -197,13 +213,24 @@ router.get('/:id', (req, res) => {
       }
     })
     .catch((error) => {
-      console.log('Error getting topic', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    topicId:
+ *      name: id
+ *      in: path
+ *      description: ID of the topic that you want to join.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/{topicId}/join:
  *  post:
  *    description: Used for adding the Users_Id to the Topic's Members List.
@@ -212,6 +239,8 @@ router.get('/:id', (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
  *    responses:
  *      200:
  *        description: Needed information to add user to topic member's list, Returns a message.
@@ -232,19 +261,31 @@ router.get('/:id', (req, res) => {
 router.post('/:id/join', (req, res) => {
   const id = req.params.id;
   const profileId = req.body.profile_id;
-  db.addMemberToTopic(id, profileId)
+  Topics.addMemberToTopic(id, profileId)
     .then(() => {
       res
         .status(200)
         .json({ message: `Added Member ${profileId} the Topic ${id}.` });
     })
-    .catch((err) => {
-      res.status(500).json(err);
+    .catch((error) => {
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    topicId:
+ *      name: id
+ *      in: path
+ *      description: ID of the topic that you want to join.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/{topicId}/request:
  *  post:
  *    description: Used for creating an Iteration or a "Request" for users to join in on and answer questions.
@@ -253,6 +294,8 @@ router.post('/:id/join', (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
  *    responses:
  *      201:
  *        description: Needed information to post a request, Returns request Information.
@@ -274,18 +317,29 @@ router.post('/:id/join', (req, res) => {
 router.post('/:topicId/request', validateRequestBody, (req, res) => {
   const topicId = req.params.topicId;
   const { topic_questions, context_responses } = req.body;
-  db.createIteration(topicId, topic_questions, context_responses)
+  Topics.createIteration(topicId, topic_questions, context_responses)
     .then((request) => {
       res.status(201).json(request);
     })
     .catch((error) => {
-      console.log('Error Posting Topic', error);
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
+      res
+        .status(500)
+        .json({ message: `We are sorry, Internal server error, ${error}` });
     });
 });
 
 /**
  * @swagger
+ * components:
+ *  parameters:
+ *    requestId:
+ *      name: id
+ *      in: path
+ *      description: ID of the request, returning the iteration/request made from the initial topic.
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  * /topic/request/{requestId}:
  *  get:
  *    description: Calling to this endpoint will allow the dashboard to fill up with Context Questions/Responses (left side of Hi-FI), And recently created Topic_questions.
@@ -294,6 +348,8 @@ router.post('/:topicId/request', validateRequestBody, (req, res) => {
  *      - okta: []
  *    tags:
  *      - topic
+ *    parameters:
+ *      - $ref: '#/components/parameters/requestId'
  *    responses:
  *      200:
  *        description:
@@ -318,7 +374,7 @@ router.post('/:topicId/request', validateRequestBody, (req, res) => {
 
 router.get('/request/:reqId', (req, res) => {
   const requestId = req.params.reqId;
-  db.getTopicRequestDetailed(requestId).then((requestInfo) => {
+  Topics.getTopicRequestDetailed(requestId).then((requestInfo) => {
     if (requestInfo) {
       res.status(200).json(requestInfo);
     } else {
