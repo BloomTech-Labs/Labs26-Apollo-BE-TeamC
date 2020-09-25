@@ -81,9 +81,7 @@ router.get('/:id/replies', (req, res) => {
         let username;
         let userAvatarUrl;
 
-        acc[curr] = {};
-
-        acc[curr].replies = replies
+        const foundReplies = replies
           .filter((reply) => reply.profile_id === curr)
           .map(
             ({
@@ -97,15 +95,30 @@ router.get('/:id/replies', (req, res) => {
             }) => {
               if (!username) username = name;
               if (!userAvatarUrl) userAvatarUrl = avatarUrl;
-              return { id, posted_at, iteration_id, question_id, content };
+              return {
+                id,
+                posted_at,
+                iteration_id,
+                question_id,
+                content,
+              };
             }
           );
-        if (!acc[curr].name) acc[curr].name = username;
-        if (!acc[curr].avatarUrl) acc[curr].avatarUrl = userAvatarUrl;
-        return acc;
-      }, {});
 
-      res.status(200).json({ filteredReplies, reply_status: status });
+        acc.push({
+          profile_id: curr,
+          name: username,
+          avatarUrl: userAvatarUrl,
+          replies: foundReplies,
+        });
+
+        return acc;
+      }, []);
+
+      res.status(200).json({
+        request_replies: filteredReplies,
+        member_reply_statuses: status,
+      });
     })
     .catch((error) => {
       console.log(error);
