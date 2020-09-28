@@ -335,7 +335,7 @@ router.put('/', authRequired, (req, res) => {
  *                topics:
  *                  type: array
  *                  description: an array of topics associated
- *                  example: [{id : 1, created_by: id, frequency: string, title: string}]
+ *                  example: [{id : 1, created_by: "00ulthapbErVUwVJy4x6", frequency: "Daily", title: "Development Team"}, {id : 2, created_by: "00ulthapbErVUwVJy4x6", frequency: "Weekly", title: "Foodies"} ]
  */
 
 router.get('/:id/my-created-topics', (req, res) => {
@@ -393,7 +393,7 @@ router.get('/:id/my-created-topics', (req, res) => {
  *                topics:
  *                  type: array
  *                  description: an array of topics associated
- *                  example: [{topic_id : 1, title: string}]
+ *                  example: [{topic_id : 1, title: "UI Team"}, {topic_id : 1, title: "Backend Team"}]
  */
 router.get('/:id/my-joined-topics', (req, res) => {
   const id = req.params.id;
