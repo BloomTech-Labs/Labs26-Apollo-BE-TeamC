@@ -119,6 +119,7 @@ const router = express.Router();
  *                  frequency: "Daily"
  *                  context_questions: ["Question 1", "Question 2", "Question 3"]
  *                  default_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
+ *                  topic_iteration_requests: []
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      403:
