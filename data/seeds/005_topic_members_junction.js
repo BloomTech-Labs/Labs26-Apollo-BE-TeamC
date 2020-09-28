@@ -9,6 +9,10 @@ exports.seed = function (knex) {
           topic_id: 1,
           member_id: '00ulthapbErVUwVJy4x6',
         },
+        {
+          topic_id: 1,
+          member_id: '00ultwew80Onb2vOT4x6',
+        },
       ]);
     });
 };

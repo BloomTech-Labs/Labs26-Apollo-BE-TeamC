@@ -20,6 +20,10 @@ module.exports = {
         name: 'topic',
         description: 'Operations for topics',
       },
+      {
+        name: 'requests',
+        description: 'Operations for requests',
+      },
     ],
     externalDocs: {
       description: 'Apollo Team Github',

@@ -241,17 +241,23 @@ router.get('/:id', (req, res) => {
  *      - topic
  *    parameters:
  *      - $ref: '#/components/parameters/topicId'
+ *    requestBody:
+ *      description: Data to send up. Must include all the data below to reply to join a topic.
+ *      content:
+ *        application/json:
+ *          schema:
+ *              type: object
+ *              example:
+ *                  - "profile_id": "00ulthapbErVUwVJy4x6"
  *    responses:
  *      200:
- *        description: Needed information to add user to topic member's list, Returns a message.
+ *        description: the response from a successful post to the endpoint.
  *        content:
  *          application/json:
  *            schema:
  *              type: object
- *              items:
- *                $ref: '#/components/schemas/Topic'
  *              example:
- *                  - "profile_id": "00ulthapbErVUwVJy4x6"
+ *                  - message: "Added Member {id} the Topic {topicId}."
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      403:
@@ -296,6 +302,43 @@ router.post('/:id/join', (req, res) => {
  *      - topic
  *    parameters:
  *      - $ref: '#/components/parameters/topicId'
+ *    requestBody:
+ *      description: Data to send up. Must include all the data below to reply to create a request.
+ *      content:
+ *        application/json:
+ *          schema:
+ *              type: object
+ *              example:
+*                  - {
+  "topic_questions" : [
+    {
+        "content": "What did you accomplish yesterday?",
+        "response_type": "string"
+    },
+    {
+        "content": "Why are you alive man?",
+        "response_type": "string"
+    },
+    {
+        "content": "Have you seen my dog?",
+        "response_type": "string"
+    }
+  ],
+  "context_responses": [
+        {
+            "id" : 1,
+            "content": "Get something deployed"
+        },
+        {
+            "id": 2,
+            "content": "Get something returning"
+        },
+        {
+            "id": 3,
+            "content": "We have a nice dmo coming up! be ready"
+        }
+    ]
+}
  *    responses:
  *      201:
  *        description: Needed information to post a request, Returns request Information.
@@ -326,61 +369,6 @@ router.post('/:topicId/request', validateRequestBody, (req, res) => {
         .status(500)
         .json({ message: `We are sorry, Internal server error, ${error}` });
     });
-});
-
-/**
- * @swagger
- * components:
- *  parameters:
- *    requestId:
- *      name: id
- *      in: path
- *      description: ID of the request, returning the iteration/request made from the initial topic.
- *      required: true
- *      example: 1
- *      schema:
- *        type: integer
- * /topic/request/{requestId}:
- *  get:
- *    description: Calling to this endpoint will allow the dashboard to fill up with Context Questions/Responses (left side of Hi-FI), And recently created Topic_questions.
- *    summary: Returns topic request for users to access!
- *    security:
- *      - okta: []
- *    tags:
- *      - topic
- *    parameters:
- *      - $ref: '#/components/parameters/requestId'
- *    responses:
- *      200:
- *        description:
- *        content:
- *          application/json:
- *            schema:
- *              type: array
- *              items:
- *                $ref: '#/components/schemas/Topic'
- *              example:
- *                - id: 5
- *                  topic_id: 1
- *                  posted_at: "2020-09-16T20:40:42.319Z"
- *                  context_responses: [{context_question: "Question Text", context_response: "response"}, {context_question: "Question Text", context_response: "response"}, {context_question: "Question Text", context_response: "response"}]
- *                  topic_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
- *      401:
- *        $ref: '#/components/responses/UnauthorizedError'
- *      403:
- *        $ref: '#/components/responses/UnauthorizedError'
- *
- */
-
-router.get('/request/:reqId', (req, res) => {
-  const requestId = req.params.reqId;
-  Topics.getTopicRequestDetailed(requestId).then((requestInfo) => {
-    if (requestInfo) {
-      res.status(200).json(requestInfo);
-    } else {
-      res.status(500).json({ message: 'We are sorry, Internal server error.' });
-    }
-  });
 });
 
 module.exports = router;
