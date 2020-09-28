@@ -241,17 +241,23 @@ router.get('/:id', (req, res) => {
  *      - topic
  *    parameters:
  *      - $ref: '#/components/parameters/topicId'
+ *    requestBody:
+ *      description: Data to send up. Must include all the data below to reply to join a topic.
+ *      content:
+ *        application/json:
+ *          schema:
+ *              type: object
+ *              example:
+ *                  - "profile_id": "00ulthapbErVUwVJy4x6"
  *    responses:
  *      200:
- *        description: Needed information to add user to topic member's list, Returns a message.
+ *        description: the response from a successful post to the endpoint.
  *        content:
  *          application/json:
  *            schema:
  *              type: object
- *              items:
- *                $ref: '#/components/schemas/Topic'
  *              example:
- *                  - "profile_id": "00ulthapbErVUwVJy4x6"
+ *                  - message: "Added Member {id} the Topic {topicId}."
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      403:
@@ -296,6 +302,43 @@ router.post('/:id/join', (req, res) => {
  *      - topic
  *    parameters:
  *      - $ref: '#/components/parameters/topicId'
+ *    requestBody:
+ *      description: Data to send up. Must include all the data below to reply to create a request.
+ *      content:
+ *        application/json:
+ *          schema:
+ *              type: object
+ *              example:
+*                  - {
+  "topic_questions" : [
+    {
+        "content": "What did you accomplish yesterday?",
+        "response_type": "string"
+    },
+    {
+        "content": "Why are you alive man?",
+        "response_type": "string"
+    },
+    {
+        "content": "Have you seen my dog?",
+        "response_type": "string"
+    }
+  ],
+  "context_responses": [
+        {
+            "id" : 1,
+            "content": "Get something deployed"
+        },
+        {
+            "id": 2,
+            "content": "Get something returning"
+        },
+        {
+            "id": 3,
+            "content": "We have a nice dmo coming up! be ready"
+        }
+    ]
+}
  *    responses:
  *      201:
  *        description: Needed information to post a request, Returns request Information.
