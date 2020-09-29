@@ -100,29 +100,26 @@ const router = express.Router();
 
 /**
  * @swagger
- * /topic/:
+ * /topics/:
  *  post:
  *    description: Returns Topic and Topic Information.
  *    summary: Post a Topic!
- *    security:
- *      - okta: []
  *    tags:
  *      - topic
  *    responses:
  *      201:
- *        description: Needed information to post a topic, Returns topic Information. By sending up - "created_by", "title", "frequency", "context_questions", "default_questions", a new topic will be formed!
+ *        description: Needed information to post a topic, Returns topic Information. By sending up - "created_by", "title", "frequency", "context_questions", "default_questions", a new topic will be formed! ----------- FREQUENCY* HAS TO BE "Daily", "Weekly" or "Monthly" ------------- RESPONSE_TYPE* HAS TO BE "Rating", "String", "Url" or "Boolean" Correct spelling and casing.
  *        content:
  *          application/json:
  *            schema:
  *              type: object
- *              items:
- *                $ref: '#/components/schemas/Topic'
  *              example:
  *                - created_by: '00uhjfrwdWAQvD8JV4x6'
  *                  title: "Topic Name"
  *                  frequency: "Daily"
  *                  context_questions: ["Question 1", "Question 2", "Question 3"]
  *                  default_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
+ *                  topic_iteration_requests: []
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      403:
@@ -170,7 +167,7 @@ router.get('/', (req, res) => {
  *      example: 1
  *      schema:
  *        type: integer
- * /topic/{id}:
+ * /topics/{id}:
  *  get:
  *    description: By passing in a "topic id" as id, it will return the topic and details
  *    summary: Get a singular topic
@@ -193,8 +190,10 @@ router.get('/', (req, res) => {
  *                - created_by: '00uhjfrwdWAQvD8JV4x6'
  *                  title: "Development Team"
  *                  frequency: "Daily"
+ *                  members: [{"id": "00ulthapbErVUwVJy4x6", "name": "Bobby Gondola", "avatarUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/codysanfilippo/128.jpg"}]
  *                  context_questions: ["Question 1", "Question 2", "Question 3"]
  *                  default_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
+ *                  topic_iteration_requests: [{"id": 1, "posted_at": "2020-09-28T00:37:22.873Z"}]
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      403:
@@ -231,7 +230,7 @@ router.get('/:id', (req, res) => {
  *      example: 1
  *      schema:
  *        type: integer
- * /topic/{topicId}/join:
+ * /topics/{topicId}/join:
  *  post:
  *    description: Used for adding the Users_Id to the Topic's Members List.
  *    summary: Add the user to the Topic's Members List!
@@ -292,7 +291,7 @@ router.post('/:id/join', (req, res) => {
  *      example: 1
  *      schema:
  *        type: integer
- * /topic/{topicId}/request:
+ * /topics/{topicId}/request:
  *  post:
  *    description: Used for creating an Iteration or a "Request" for users to join in on and answer questions.
  *    summary: Create a Request!
