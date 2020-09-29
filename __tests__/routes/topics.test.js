@@ -1,5 +1,24 @@
 const request = require('supertest');
 const server = require('../../api/app.js');
+const knex = require('../../data/db-config');
+
+describe('cleanup', () => {
+  beforeEach(async () => {
+    await knex.migrate.latest();
+  });
+});
+
+describe('Cleanup', () => {
+  afterAll(async () => {
+    await knex.migrate.rollback();
+  });
+});
+
+describe('testing env', () => {
+  it('should be using test env', () => {
+    expect(process.env.NODE_ENV).toBe('test');
+  });
+});
 
 describe('topics/ get endpoint', () => {
   it('should return 200', () => {
@@ -43,6 +62,16 @@ describe('post a topic', () => {
         expect(res.status).toBe(201);
         expect(res.body.frequency).toBe('Monthly');
         expect(res.type).toMatch(/json/i);
+      });
+  });
+});
+
+describe('obtain a topic by ID', () => {
+  it('Should return correct data by ID', () => {
+    return request(server)
+      .get('/topics/1')
+      .then((res) => {
+        expect(res.status).toBe(200);
       });
   });
 });
