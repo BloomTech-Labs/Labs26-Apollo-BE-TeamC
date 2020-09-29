@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Requests = require('./requestModel');
+const { validateRequestReplies } = require('../middleware/requests');
 
 /**
  * @swagger
@@ -80,7 +81,7 @@ const Requests = require('./requestModel');
  *
  */
 
-router.post('/:id', (req, res) => {
+router.post('/:id', validateRequestReplies, (req, res) => {
   const { id } = req.params;
   const { profile_id, replies } = req.body;
 
