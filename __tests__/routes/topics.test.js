@@ -18,12 +18,6 @@ describe('Topic router endpoints', () => {
     jest.clearAllMocks();
   });
 
-  describe('testing env', () => {
-    it('should be using test env', () => {
-      expect(process.env.NODE_ENV).toBe('test');
-    });
-  });
-
   describe('GET /topics', () => {
     it('should return 200', async () => {
       topicDb.findAllTopics.mockResolvedValue();
