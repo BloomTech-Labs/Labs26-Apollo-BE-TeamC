@@ -100,7 +100,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /topic/:
+ * /topics/:
  *  post:
  *    description: Returns Topic and Topic Information.
  *    summary: Post a Topic!
@@ -167,7 +167,7 @@ router.get('/', (req, res) => {
  *      example: 1
  *      schema:
  *        type: integer
- * /topic/{id}:
+ * /topics/{id}:
  *  get:
  *    description: By passing in a "topic id" as id, it will return the topic and details
  *    summary: Get a singular topic
@@ -230,7 +230,7 @@ router.get('/:id', (req, res) => {
  *      example: 1
  *      schema:
  *        type: integer
- * /topic/{topicId}/join:
+ * /topics/{topicId}/join:
  *  post:
  *    description: Used for adding the Users_Id to the Topic's Members List.
  *    summary: Add the user to the Topic's Members List!
@@ -291,7 +291,7 @@ router.post('/:id/join', (req, res) => {
  *      example: 1
  *      schema:
  *        type: integer
- * /topic/{topicId}/request:
+ * /topics/{topicId}/request:
  *  post:
  *    description: Used for creating an Iteration or a "Request" for users to join in on and answer questions.
  *    summary: Create a Request!
