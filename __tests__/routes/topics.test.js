@@ -1,15 +1,13 @@
 const request = require('supertest');
 const express = require('express');
+const Profiles = require('../../api/profile/profileModel');
 const topicDb = require('../../api/topics/topicModel');
 const topicRouter = require('../../api/topics/topicRouter');
 const server = express();
 server.use(express.json());
 
 jest.mock('../../api/topics/topicModel');
-// mock the auth middleware completely
-jest.mock('../../api/middleware/authRequired', () =>
-  jest.fn((req, res, next) => next())
-);
+jest.mock('../../api/profile/profileModel');
 
 describe('Topic router endpoints', () => {
   beforeAll(() => {
@@ -59,7 +57,7 @@ describe('Topic router endpoints', () => {
       const topic = {
         created_by: '00ulthapbErVUwVJy4x6',
         frequency: 'Monthly',
-        title: 'Test003',
+        title: 'Test005',
         context_questions: [
           'Did Erik get endorsed?',
           'Did Erik Submit All Of His Artifacts?',
@@ -80,7 +78,7 @@ describe('Topic router endpoints', () => {
           },
         ],
       };
-      topicDb.findById.mockResolvedValue(undefined);
+      Profiles.findById.mockResolvedValue({});
       topicDb.addTopic.mockResolvedValue([
         Object.assign({ id: '77777777' }, topic),
       ]);
