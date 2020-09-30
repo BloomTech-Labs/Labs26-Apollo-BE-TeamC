@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Requests = require('./requestModel');
+const { validateRequestReplies } = require('../middleware/requests');
 
 /**
  * @swagger
@@ -80,7 +81,7 @@ const Requests = require('./requestModel');
  *
  */
 
-router.post('/:id', (req, res) => {
+router.post('/:id', validateRequestReplies, (req, res) => {
   const { id } = req.params;
   const { profile_id, replies } = req.body;
 
@@ -140,13 +141,20 @@ router.post('/:id', (req, res) => {
 router.get('/:id', (req, res) => {
   const { id } = req.params;
 
-  Requests.getRequestDetailed(id).then((requestInfo) => {
-    if (requestInfo) {
-      res.status(200).json(requestInfo);
-    } else {
+  Requests.getRequestDetailed(id)
+    .then((requestInfo) => {
+      if (requestInfo.id) {
+        res.status(200).json(requestInfo);
+      } else {
+        res
+          .status(404)
+          .json({ message: 'Could not find request with that id' });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
       res.status(500).json({ message: 'We are sorry, Internal server error.' });
-    }
-  });
+    });
 });
 
 /**
