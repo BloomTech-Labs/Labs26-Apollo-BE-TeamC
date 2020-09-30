@@ -16,7 +16,11 @@ const validateRequestReplies = async (req, res, next) => {
     return res.status(400).json({ error: 'Must include a profile id' });
   }
 
-  replies.forEach(({ question_id, content }) => {
+  if (!replies) {
+    return res.status(400).json({ error: 'Must include replies' });
+  }
+
+  for (const { question_id, content } of replies) {
     if (!question_id) {
       return res
         .status(400)
@@ -28,7 +32,7 @@ const validateRequestReplies = async (req, res, next) => {
         .status(400)
         .json({ error: 'Every reply must include a content value' });
     }
-  });
+  }
 
   next();
 };
