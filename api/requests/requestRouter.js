@@ -164,7 +164,7 @@ router.get('/:id', (req, res) => {
  *    requestId:
  *      name: id
  *      in: path
- *      description: ID of the request that you want to join.
+ *      description: ID of the request that you want to get questions from.
  *      required: true
  *      example: 1
  *      schema:
@@ -172,7 +172,7 @@ router.get('/:id', (req, res) => {
  * /requests/{requestId}/questions:
  *  get:
  *    description: Calling to this endpoint will return the questons associated with the request/iteration of the original topic.
- *    summary: Returns the questions associated with the request/iteration of the original topic.
+ *    summary: Returns the questions associated with the request/iteration of the original topic. IGNORE OUTERMOST [] BRACKETS.
  *    security:
  *      - okta: []
  *    tags:
@@ -208,6 +208,102 @@ router.get('/:id/questions', (req, res) => {
       res.status(500).json({ message: 'We are sorry, Internal server error.' });
     });
 });
+
+/**
+ * @swagger
+ * components:
+ *  parameters:
+ *    requestId:
+ *      name: id
+ *      in: path
+ *      description: ID of the request that you want to get replies from.
+ *      required: true
+ *      example: 432
+ *      schema:
+ *        type: integer
+ * /requests/{requestId}/replies:
+ *  get:
+ *    description: Used for getting the replies of a certain request to be mapped out to the UI.
+ *    summary: Used for getting the replies of a certain request!
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - requests
+ *    parameters:
+ *      - $ref: '#/components/parameters/topicId'
+ *    requestBody:
+ *      description: Return data from the GET, includes replies from user/response status(has replied or not). IGNORE OUTERMOST [] BRACKETS.
+ *      content:
+ *        application/json:
+ *          schema:
+ *              type: object
+ *              example:
+*                  - {
+    "request_replies": [
+        {
+            "profile_id": "00ulthapbErVUwVJy4x6",
+            "name": "Test001 User",
+            "avatarUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/codysanfilippo/128.jpg",
+            "replies": [
+                {
+                    "id": 1,
+                    "posted_at": "2020-09-28T00:37:22.901Z",
+                    "iteration_id": 1,
+                    "question_id": 1,
+                    "content": "Ate a sandwich"
+                },
+                {
+                    "id": 2,
+                    "posted_at": "2020-09-28T00:37:22.901Z",
+                    "iteration_id": 1,
+                    "question_id": 2,
+                    "content": "Making a sandwich"
+                },
+                {
+                    "id": 3,
+                    "posted_at": "2020-09-28T00:37:22.901Z",
+                    "iteration_id": 1,
+                    "question_id": 3,
+                    "content": "Sandwich monsters"
+                },
+                {
+                    "id": 4,
+                    "posted_at": "2020-09-28T00:42:24.809Z",
+                    "iteration_id": 1,
+                    "question_id": 1,
+                    "content": "Second User first Answer"
+                },
+                {
+                    "id": 5,
+                    "posted_at": "2020-09-28T00:42:24.809Z",
+                    "iteration_id": 1,
+                    "question_id": 2,
+                    "content": "Second User second Answer"
+                },
+                {
+                    "id": 6,
+                    "posted_at": "2020-09-28T00:42:24.809Z",
+                    "iteration_id": 1,
+                    "question_id": 3,
+                    "content": "Second User third Answer"
+                }
+            ]
+        }
+    ],
+    "member_reply_statuses": [
+        {
+            "id": "00ulthapbErVUwVJy4x6",
+            "name": "Test001 User",
+            "has_replied": true
+        },
+        {
+            "id": "00ultwew80Onb2vOT4x6",
+            "name": "Test002 User",
+            "has_replied": false
+        }
+    ]
+}
+ */
 
 router.get('/:id/replies', (req, res) => {
   const { id } = req.params;
