@@ -1,4 +1,3 @@
-const Profiles = require('../../profile/profileModel');
 const Topics = require('../../topics/topicModel');
 
 // Constant values
@@ -7,26 +6,10 @@ const responseTypes = ['Rating', 'String', 'Url', 'Boolean'];
 
 // Validates values in Topic POST Request
 const validateTopicBody = async (req, res, next) => {
-  const {
-    created_by,
-    title,
-    frequency,
-    context_questions,
-    default_questions,
-  } = req.body;
+  const { title, frequency, context_questions, default_questions } = req.body;
 
-  if (!created_by || !title) {
-    return res
-      .status(400)
-      .json({ error: 'Topic must include created_by and title values' });
-  }
-
-  const topic_creator = await Profiles.findById(created_by);
-
-  if (!topic_creator) {
-    return res
-      .status(404)
-      .json({ error: 'Could not find user with id in database' });
+  if (!title) {
+    return res.status(400).json({ error: 'Topic must include title value' });
   }
 
   if (!frequency) {

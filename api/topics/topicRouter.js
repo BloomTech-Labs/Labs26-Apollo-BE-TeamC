@@ -129,8 +129,9 @@ const router = express.Router();
 //posts
 router.post('/', validateTopicBody, (req, res) => {
   const topicInfo = req.body;
+  const created_by = req.profile.id;
 
-  Topics.addTopic(topicInfo)
+  Topics.addTopic({ ...topicInfo, created_by })
     .then((topic) => {
       console.log(topic);
       res.status(201).json(topic);
@@ -265,7 +266,7 @@ router.get('/:id', (req, res) => {
 
 router.post('/:id/join', (req, res) => {
   const id = req.params.id;
-  const profileId = req.body.profile_id;
+  const profileId = req.profile.id;
   Topics.addMemberToTopic(id, profileId)
     .then(() => {
       res

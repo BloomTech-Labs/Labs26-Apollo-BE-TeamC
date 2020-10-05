@@ -83,7 +83,8 @@ const { validateRequestReplies } = require('../middleware/requests');
 
 router.post('/:id', validateRequestReplies, (req, res) => {
   const { id } = req.params;
-  const { profile_id, replies } = req.body;
+  const { replies } = req.body;
+  const profile_id = req.profile.id;
 
   Requests.addRequestReplies(id, profile_id, replies).then((requestInfo) => {
     if (requestInfo) {
