@@ -9,7 +9,6 @@ const { validateRequestReplies } = require('../middleware/requests');
  *    postReplies:
  *      type: object
  *      required:
- *        - profile_id
  *        - replies
  *      properties:
  *        profile_id:
@@ -24,7 +23,6 @@ const { validateRequestReplies } = require('../middleware/requests');
  *              content:
  *                type: string
  *      example:
- *        profile_id: '00uhjfrwdWAQvD8JV4x6'
  *        replies: [{question_id: 1, content: "String"}, {question_id: 2, content: "String"}, {question_id: 3, content: "String"}]
  */
 

@@ -108,14 +108,13 @@ const router = express.Router();
  *      - topic
  *    responses:
  *      201:
- *        description: Needed information to post a topic, Returns topic Information. By sending up - "created_by", "title", "frequency", "context_questions", "default_questions", a new topic will be formed! ----------- FREQUENCY* HAS TO BE "Daily", "Weekly" or "Monthly" ------------- RESPONSE_TYPE* HAS TO BE "Rating", "String", "Url" or "Boolean" Correct spelling and casing.
+ *        description: Needed information to post a topic, Returns topic Information. By sending up "title", "frequency", "context_questions", "default_questions", a new topic will be formed! ----------- FREQUENCY* HAS TO BE "Daily", "Weekly" or "Monthly" ------------- RESPONSE_TYPE* HAS TO BE "Rating", "String", "Url" or "Boolean" Correct spelling and casing.
  *        content:
  *          application/json:
  *            schema:
  *              type: object
  *              example:
- *                - created_by: '00uhjfrwdWAQvD8JV4x6'
- *                  title: "Topic Name"
+ *                - title: "Topic Name"
  *                  frequency: "Daily"
  *                  context_questions: ["Question 1", "Question 2", "Question 3"]
  *                  default_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
@@ -241,14 +240,6 @@ router.get('/:id', (req, res) => {
  *      - topic
  *    parameters:
  *      - $ref: '#/components/parameters/topicId'
- *    requestBody:
- *      description: Data to send up. Must include all the data below to reply to join a topic.
- *      content:
- *        application/json:
- *          schema:
- *              type: object
- *              example:
- *                  - "profile_id": "00ulthapbErVUwVJy4x6"
  *    responses:
  *      200:
  *        description: the response from a successful post to the endpoint.
