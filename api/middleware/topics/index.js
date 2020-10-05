@@ -98,15 +98,15 @@ const validateRequestBody = async (req, res, next) => {
     return res.status(400).json({ error: 'Request must have topic_questions' });
   }
 
-  context_responses.forEach(({ id, content }) => {
+  for (const { id, content } of context_responses) {
     if (!id || !content) {
       return res.status(400).json({
         error: 'Each context response must have content and id values',
       });
     }
-  });
+  }
 
-  topic_questions.forEach(({ content, response_type }) => {
+  for (const { content, response_type } of topic_questions) {
     if (!content || !response_type) {
       return res.status(400).json({
         error: 'Topic question must have content and a response_type values',
@@ -119,7 +119,7 @@ const validateRequestBody = async (req, res, next) => {
           'Topic question response_type must be Rating, String, Url, or Boolean',
       });
     }
-  });
+  }
 
   next();
 };

@@ -23,6 +23,7 @@ const indexRouter = require('./index/indexRouter');
 const profileRouter = require('./profile/profileRouter');
 const topicRouter = require('./topics/topicRouter');
 const requestRouter = require('./requests/requestRouter');
+const authRequired = require('./middleware/authRequired');
 
 const app = express();
 
@@ -51,8 +52,8 @@ app.use(cookieParser());
 // application routes
 app.use('/', indexRouter);
 app.use(['/profile', '/profiles'], profileRouter);
-app.use('/topics', topicRouter);
-app.use('/requests', requestRouter);
+app.use('/topics', authRequired, topicRouter);
+app.use('/requests', authRequired, requestRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
