@@ -3,16 +3,24 @@ const express = require('express');
 const Profiles = require('../../api/profile/profileModel');
 const topicDb = require('../../api/topics/topicModel');
 const topicRouter = require('../../api/topics/topicRouter');
+const authRequired = require('../../api/middleware/authRequired');
 const server = express();
 server.use(express.json());
 
 jest.mock('../../api/topics/topicModel');
 jest.mock('../../api/profile/profileModel');
 
+jest.mock('../../api/middleware/authRequired', () =>
+  jest.fn((req, res, next) => {
+    req.profile = { id: '1234' };
+    next();
+  })
+);
+
 describe('Topic router endpoints', () => {
   beforeAll(() => {
     // This is the module/route being tested
-    server.use('/topics', topicRouter);
+    server.use('/topics', authRequired, topicRouter);
     jest.clearAllMocks();
   });
 
@@ -55,7 +63,6 @@ describe('Topic router endpoints', () => {
   describe('POST /topics', () => {
     it('should return 201 when a topic is created', async () => {
       const topic = {
-        created_by: '00ulthapbErVUwVJy4x6',
         frequency: 'Monthly',
         title: 'Test005',
         context_questions: [

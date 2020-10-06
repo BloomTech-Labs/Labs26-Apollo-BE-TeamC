@@ -2,15 +2,23 @@ const request = require('supertest');
 const express = require('express');
 const Requests = require('../../api/requests/requestModel');
 const requestRouter = require('../../api/requests/requestRouter');
+const authRequired = require('../../api/middleware/authRequired');
 const server = express();
 server.use(express.json());
 
 jest.mock('../../api/requests/requestModel');
 
+jest.mock('../../api/middleware/authRequired', () =>
+  jest.fn((req, res, next) => {
+    req.profile = { id: '1234' };
+    next();
+  })
+);
+
 describe('requests router endpoints', () => {
   beforeAll(() => {
     // This is the module/route being tested
-    server.use('/requests', requestRouter);
+    server.use('/requests', authRequired, requestRouter);
     jest.clearAllMocks();
   });
 
@@ -117,7 +125,6 @@ describe('requests router endpoints', () => {
       };
 
       const replyObject = {
-        profile_id: '00ultwew80Onb2vOT4x6',
         replies: [
           { question_id: 1, content: 'Second User first Answer' },
           { question_id: 2, content: 'Second User second Answer' },
@@ -131,20 +138,6 @@ describe('requests router endpoints', () => {
 
       expect(res.status).toBe(200);
       expect(res.body).toStrictEqual(replyObject.replies);
-    });
-
-    it('should return 400 when replies are sent without profile id', async () => {
-      const replyObject = {
-        replies: [
-          { question_id: 1, content: 'Second User first Answer' },
-          { question_id: 2, content: 'Second User second Answer' },
-          { question_id: 3, content: 'Second User third Answer' },
-        ],
-      };
-      const res = await request(server).post('/requests/1').send(replyObject);
-
-      expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Must include a profile id');
     });
 
     it('should return 400 when replies are sent without replies', async () => {
