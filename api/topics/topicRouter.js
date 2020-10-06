@@ -133,7 +133,6 @@ router.post('/', validateTopicBody, (req, res) => {
 
   Topics.addTopic({ ...topicInfo, created_by })
     .then((topic) => {
-      console.log(topic);
       res.status(201).json(topic);
     })
     .catch((error) => {
