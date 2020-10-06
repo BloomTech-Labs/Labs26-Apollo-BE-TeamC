@@ -414,4 +414,15 @@ router.get('/:id/my-joined-topics', (req, res) => {
     });
 });
 
+router.get('/:id/my-topics', (req, res) => {
+  const id = req.params.id;
+  Profiles.findJoinedTopics(id).then((joinedTopics) => {
+    Profiles.findCreatedTopics(id).then((createdTopics) => {
+      res
+        .status(200)
+        .json({ myTopics: { created: createdTopics, joined: joinedTopics } });
+    });
+  });
+});
+
 module.exports = router;
