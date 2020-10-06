@@ -142,6 +142,32 @@ router.post('/', validateTopicBody, (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ * /topics/:
+ *  get:
+ *    description: Calling this endpoint returns an object with 2 arrays in it, joined[] and created[].
+ *    summary:  Returns created and joined topics.
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - topic
+ *    responses:
+ *      200:
+ *        description:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              example:
+ *                - { myTopics: { created: [{id: 1, created_by: "00ult", frequency: "Daily", title: "Dev Team"}, {id: 2, created_by: "00ult", frequency: "Weekly", title: "FrontEnd"}], joined: [{topic_id: 1, title: "Dev Team"}] } }
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      403:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *
+ */
+
 //gets
 router.get('/', (req, res) => {
   const id = req.profile.id;
