@@ -1,4 +1,5 @@
 const express = require('express');
+const Profiles = require('../profile/profileModel');
 // const authRequired = require('../middleware/authRequired');
 
 const Topics = require('./topicModel');
@@ -144,15 +145,20 @@ router.post('/', validateTopicBody, (req, res) => {
 
 //gets
 router.get('/', (req, res) => {
-  Topics.findAllTopics()
-    .then((topics) => {
-      res.status(200).json(topics);
-    })
-    .catch((error) => {
-      res
-        .status(500)
-        .json({ message: `We are sorry, Internal server error, ${error}` });
-    });
+  const id = req.profile.id;
+  Profiles.findJoinedTopics(id).then((joinedTopics) => {
+    Profiles.findCreatedTopics(id)
+      .then((createdTopics) => {
+        res
+          .status(200)
+          .json({ myTopics: { created: createdTopics, joined: joinedTopics } });
+      })
+      .catch((error) => {
+        res
+          .status(500)
+          .json({ message: `We are sorry, Internal server error, ${error}` });
+      });
+  });
 });
 
 /**
