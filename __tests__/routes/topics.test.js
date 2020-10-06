@@ -26,12 +26,14 @@ describe('Topic router endpoints', () => {
 
   describe('GET /topics', () => {
     it('should return 200', async () => {
-      topicDb.findAllTopics.mockResolvedValue();
+      Profiles.findJoinedTopics.mockResolvedValue([]);
+      Profiles.findCreatedTopics.mockResolvedValue([]);
       const res = await request(server).get('/topics');
 
       expect(res.status).toBe(200);
-      expect(res.body.length).toBe(0);
-      expect(topicDb.findAllTopics.mock.calls.length).toBe(1);
+      expect(res.body).toStrictEqual({ myTopics: { created: [], joined: [] } });
+      expect(Profiles.findJoinedTopics.mock.calls.length).toBe(1);
+      expect(Profiles.findCreatedTopics.mock.calls.length).toBe(1);
     });
   });
 
