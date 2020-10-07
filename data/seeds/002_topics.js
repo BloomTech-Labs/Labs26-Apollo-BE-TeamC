@@ -7,7 +7,7 @@ exports.seed = function (knex) {
       return knex('topics').insert([
         {
           created_by: '00ulthapbErVUwVJy4x6',
-          frequency: 'daily',
+          frequency: 'Daily',
           title: 'Development Team',
         },
       ]);
