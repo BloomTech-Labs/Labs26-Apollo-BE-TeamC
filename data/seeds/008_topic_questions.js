@@ -7,15 +7,15 @@ exports.seed = function (knex) {
       return knex('topic_questions').insert([
         {
           content: 'What did you accomplish yesterday?',
-          response_type: 'string',
+          response_type: 'String',
         },
         {
           content: 'What are you working on today?',
-          response_type: 'string',
+          response_type: 'String',
         },
         {
           content: 'Are there any monsters in your path?',
-          response_type: 'string',
+          response_type: 'String',
         },
       ]);
     });
