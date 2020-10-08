@@ -180,7 +180,7 @@ const createIteration = async (topicId, topicQuestions, contextResponses) => {
       content,
     });
   }
-  return await Requests.getTopicRequestDetailed(iterationId);
+  return await Requests.getRequestDetailed(iterationId);
 };
 
 module.exports = {
