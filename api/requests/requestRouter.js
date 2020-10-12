@@ -130,6 +130,20 @@ router.post('/:id', validateRequestReplies, (req, res) => {
  *                  posted_at: "2020-09-16T20:40:42.319Z"
  *                  context_responses: [{context_question: "Question Text", context_response: "response"}, {context_question: "Question Text", context_response: "response"}, {context_question: "Question Text", context_response: "response"}]
  *                  topic_questions: [{content: "Question 1", response_type: "String"}, {content: "Question 2", response_type: "String"}, {content: "Question 3", response_type: "String"}]
+ *                  "member_reply_statuses": [
+ *                     {
+ *                        "id": "00ulthapbErVUwVJy4x6",
+ *                        "name": "Test001 User",
+ *                        "avatarUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/jodytaggart/128.jpg",
+ *                        "has_replied": true
+ *                      },
+ *                      {
+ *                        "id": "00ultwew80Onb2vOT4x6",
+ *                        "name": "Test002 User",
+ *                        "avatarUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/overcloacked/128.jpg",
+ *                        "has_replied": false
+ *                      }
+ *                    ]
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      403:
@@ -253,6 +267,7 @@ router.get('/:id/questions', (req, res) => {
                     "posted_at": "2020-09-28T00:37:22.901Z",
                     "iteration_id": 1,
                     "question_id": 1,
+                    "question": "What did you accomplish yesterday?",
                     "content": "Ate a sandwich"
                 },
                 {
@@ -260,6 +275,7 @@ router.get('/:id/questions', (req, res) => {
                     "posted_at": "2020-09-28T00:37:22.901Z",
                     "iteration_id": 1,
                     "question_id": 2,
+                    "question": "What are you working on today?",
                     "content": "Making a sandwich"
                 },
                 {
@@ -267,44 +283,12 @@ router.get('/:id/questions', (req, res) => {
                     "posted_at": "2020-09-28T00:37:22.901Z",
                     "iteration_id": 1,
                     "question_id": 3,
+                    "question": "Are there any monsters in your path?",
                     "content": "Sandwich monsters"
-                },
-                {
-                    "id": 4,
-                    "posted_at": "2020-09-28T00:42:24.809Z",
-                    "iteration_id": 1,
-                    "question_id": 1,
-                    "content": "Second User first Answer"
-                },
-                {
-                    "id": 5,
-                    "posted_at": "2020-09-28T00:42:24.809Z",
-                    "iteration_id": 1,
-                    "question_id": 2,
-                    "content": "Second User second Answer"
-                },
-                {
-                    "id": 6,
-                    "posted_at": "2020-09-28T00:42:24.809Z",
-                    "iteration_id": 1,
-                    "question_id": 3,
-                    "content": "Second User third Answer"
                 }
             ]
         }
     ],
-    "member_reply_statuses": [
-        {
-            "id": "00ulthapbErVUwVJy4x6",
-            "name": "Test001 User",
-            "has_replied": true
-        },
-        {
-            "id": "00ultwew80Onb2vOT4x6",
-            "name": "Test002 User",
-            "has_replied": false
-        }
-    ]
 }
  */
 
@@ -355,7 +339,7 @@ router.get('/:id/replies', (req, res) => {
       }, []);
 
       res.status(200).json({
-        replies: filteredReplies,
+        request_replies: filteredReplies,
       });
     })
     .catch((error) => {
