@@ -141,9 +141,13 @@ router.get('/:id', (req, res) => {
   const { id } = req.params;
 
   Requests.getRequestDetailed(id)
-    .then((requestInfo) => {
+    .then(async (requestInfo) => {
       if (requestInfo.id) {
-        res.status(200).json(requestInfo);
+        const replyStatuses = await Requests.getMemberRepliedStatus(
+          id,
+          requestInfo.topic_id
+        );
+        res.status(200).json({ ...requestInfo, reply_statuses: replyStatuses });
       } else {
         res
           .status(404)
@@ -308,7 +312,6 @@ router.get('/:id/replies', (req, res) => {
   const { id } = req.params;
   Requests.getRequestReplies(id)
     .then(async (replies) => {
-      const status = await Requests.getMemberRepliedStatus(id, 1);
       const whoHasReplied = await Requests.getWhoHasReplied(id);
 
       const filteredReplies = whoHasReplied.reduce((acc, curr) => {
@@ -323,6 +326,7 @@ router.get('/:id/replies', (req, res) => {
               posted_at,
               iteration_id,
               question_id,
+              question,
               content,
               name,
               avatarUrl,
@@ -334,6 +338,7 @@ router.get('/:id/replies', (req, res) => {
                 posted_at,
                 iteration_id,
                 question_id,
+                question,
                 content,
               };
             }
@@ -350,8 +355,7 @@ router.get('/:id/replies', (req, res) => {
       }, []);
 
       res.status(200).json({
-        request_replies: filteredReplies,
-        member_reply_statuses: status,
+        replies: filteredReplies,
       });
     })
     .catch((error) => {

@@ -53,7 +53,25 @@ const getRequestReplies = async (requestId) => {
     })
     .join('profiles', 'profiles.id', 'topic_question_replies.profile_id')
     .select('topic_question_replies.*', 'profiles.name', 'profiles.avatarUrl');
-  return replies;
+
+  const questions = await getRequestQuestions(requestId);
+
+  const repliesWithQuestions = replies.map((reply) => {
+    let questionContent;
+
+    questions.forEach((question) => {
+      if (question.id === reply.question_id) {
+        questionContent = question.content;
+      }
+    });
+
+    return {
+      ...reply,
+      question: questionContent,
+    };
+  });
+
+  return repliesWithQuestions;
 };
 
 const addRequestReplies = async (requestId, profileId, replies) => {
@@ -91,6 +109,7 @@ const getMemberRepliedStatus = async (iterationId, topicId) => {
     return {
       id: member.id,
       name: member.name,
+      avatarUrl: member.avatarUrl,
       has_replied: hasReplied.includes(member.id),
     };
   });
