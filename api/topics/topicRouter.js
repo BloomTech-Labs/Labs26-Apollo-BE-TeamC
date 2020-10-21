@@ -286,9 +286,33 @@ router.get('/:id', (req, res) => {
  *        $ref: '#/components/responses/UnauthorizedError'
  */
 
-router.post('/:id/join', (req, res) => {
+router.post('/:id/join', async (req, res) => {
   const id = req.params.id;
   const profileId = req.profile.id;
+
+  const topicMembers = await Topics.getTopicMembers(id);
+  const topic = await Topics.findById(id);
+
+  if (!topic.id) {
+    return res
+      .status(400)
+      .json({ message: 'There is no topic with that join code' });
+  }
+
+  if (topic.created_by === profileId) {
+    return res
+      .status(400)
+      .json({ message: 'Creator of topic cannot join as member' });
+  }
+
+  for (const member of topicMembers) {
+    if (member.id === profileId) {
+      return res
+        .status(400)
+        .json({ message: 'Member has already joined topic' });
+    }
+  }
+
   Topics.addMemberToTopic(id, profileId)
     .then(() => {
       res
