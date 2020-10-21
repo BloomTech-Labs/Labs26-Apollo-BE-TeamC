@@ -50,7 +50,7 @@ const findJoinedTopics = async (profileId) => {
       member_id: profileId,
     })
     .join('topics', 'topic_members_junction.topic_id', 'topics.id')
-    .select('topics.id as topic_id', 'topics.title');
+    .select('topics.id', 'topics.title');
 };
 
 module.exports = {
